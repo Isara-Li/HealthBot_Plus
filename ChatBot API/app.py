@@ -8,7 +8,7 @@ import openai
 app = Flask(__name__)
 CORS(app)
 
-openai.api_key = 'sk-OSQI4rNJp5O7xQRgzonWq4OYW2E6ooKAnuLtwa0taTT3BlbkFJ3HFYmqdBJwgqwJvpmJFkxov4stA46XjyB3hn7dgEMA'
+openai.api_key = API_KEY
 
 
 token_hugging_face = "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"
