@@ -6,6 +6,9 @@ module.exports = {
       height: {
         18: "4.5rem", // 18 * 0.25rem = 4.5rem
       },
+      zIndex: {
+        999: "999",
+      },
     },
   },
   plugins: [],

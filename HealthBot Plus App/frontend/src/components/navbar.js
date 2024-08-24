@@ -22,7 +22,7 @@ function Navbar() {
   };
 
   return (
-    <div className="flex bg-slate-100 h-18 font-sans">
+    <div className="flex bg-slate-100 h-18 font-sans z-[999] relative">
       <div className="w-1/4 flex justify-center items-center">
         <img src={"images/SkinVision-Logo.png"} alt="Logo" className="h-4/5" />
       </div>

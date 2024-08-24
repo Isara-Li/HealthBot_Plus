@@ -2,9 +2,14 @@ import { useNavigate } from "react-router-dom";
 
 function LoginSignup() {
   const navigate = useNavigate();
+  const navigate_ = useNavigate();
 
   const handleSignup = () => {
     navigate("/signup");
+  };
+
+  const handleLogin = () => {
+    navigate_("/login");
   };
 
   return (
@@ -25,7 +30,10 @@ function LoginSignup() {
             Get started
           </div>
           <div className="flex space-x-2">
-            <button className="p-1 h-8 w-20 text-white bg-blue-500 border-blue-700 rounded hover:bg-blue-600">
+            <button
+              onClick={handleLogin}
+              className="p-1 h-8 w-20 text-white bg-blue-500 border-blue-700 rounded hover:bg-blue-600"
+            >
               Log In
             </button>
             <button
