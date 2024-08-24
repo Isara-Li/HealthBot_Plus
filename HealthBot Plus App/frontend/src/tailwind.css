@@ -1,0 +1,69 @@
+/* tailwind.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the Patient component */
+.patient-container {
+  @apply container mx-auto p-6;
+}
+
+.patient-header {
+  @apply flex justify-between items-center mb-8;
+}
+
+.patient-statistics {
+  @apply flex space-x-4;
+}
+
+.patient-stat-item {
+  @apply bg-white shadow-lg p-4 text-center;
+}
+
+.patient-profile {
+  @apply bg-white shadow-lg rounded-lg p-6 mb-8 flex items-center;
+}
+
+.patient-profile-img {
+  @apply w-36 h-36 rounded-full border-4 border-gray-200 mr-6;
+}
+
+.patient-name {
+  @apply text-4xl font-bold text-gray-800;
+}
+
+.patient-info {
+  @apply text-gray-600 mt-2;
+}
+
+.patient-button {
+  @apply mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300;
+}
+
+.patient-editing-section {
+  @apply bg-white shadow-lg rounded-lg p-6 mb-8;
+}
+
+.patient-input {
+  @apply border p-2 mb-2 w-full rounded focus:ring-2 focus:ring-blue-500;
+}
+
+.patient-table {
+  @apply min-w-full bg-white border rounded-lg overflow-hidden;
+}
+
+.patient-table-th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.patient-table-td {
+  @apply px-6 py-4 text-sm font-medium text-gray-800;
+}
+
+.patient-table-row {
+  @apply hover:bg-gray-100 transition duration-150;
+}
+
+.patient-view-button {
+  @apply bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300;
+}
