@@ -1,9 +1,11 @@
 import "./App.css";
+import Navbar from "./components/navbar";
+import NavbarButton from "./components/navbar_button";
 
 function App() {
   return (
     <div className="App">
-      <h1>HealthBot Plus App</h1>
+      <Navbar />
     </div>
   );
 }
