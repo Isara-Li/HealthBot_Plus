@@ -82,11 +82,18 @@ const Signup = () => {
               ></textarea>
             </div>
             <div className="flex justify-end">
-              <button
+              {/* <button
                 onClick={handleNextStep}
                 className="flex items-center justify-center w-10 h-10 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-transform transform hover:scale-105"
               >
                 <FontAwesomeIcon icon={faArrowRightLong} size="sm" />
+              </button> */}
+
+              <button
+                onClick={handleNextStep}
+                className="px-6 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
+              >
+                Next
               </button>
             </div>
           </>
@@ -126,13 +133,19 @@ const Signup = () => {
               />
             </div>
             <div className="flex justify-between items-center">
-              <button
+              {/* <button
                 onClick={handlePreviousStep}
                 className="flex items-center justify-center w-10 h-10 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-transform transform hover:scale-105"
               >
                 <FontAwesomeIcon icon={faArrowLeftLong} size="sm" />
+              </button> */}
+              <button
+                onClick={handlePreviousStep}
+                className="px-6 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
+              >
+                Back
               </button>
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105">
+              <button className="px-3 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105">
                 Sign Up
               </button>
             </div>
