@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../tailwind.css"; // Import Tailwind CSS
+import "../../tailwind.css";
 import { useNavigate } from "react-router-dom";
 
 const Doctor = ({ productLogo }) => {

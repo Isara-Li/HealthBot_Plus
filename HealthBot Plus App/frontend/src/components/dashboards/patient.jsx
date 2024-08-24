@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../tailwind.css"; // Import the Tailwind CSS file
+import "../../tailwind.css";
 
 const Patient = ({ productLogo }) => {
   const [patientData, setPatientData] = useState(null);

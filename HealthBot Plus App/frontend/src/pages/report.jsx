@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../tailwind.css"; // Ensure Tailwind CSS is imported
+import "../tailwind.css";
 
 const Report = () => {
   const { reportId } = useParams();
