@@ -22,18 +22,60 @@ export default function Diagnose() {
     // State to store uploaded image and selected body part
     const [uploadedImage, setUploadedImage] = useState(null);
     const [bodyPart, setBodyPart] = useState("");
+    const pgender = "female"; // Sex attribute for the model (can be male/female)
+    const page = 50.0; // Age_approx attribute for the model
 
     // Handle image upload
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setUploadedImage(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setUploadedImage(reader.result);
+            };
+            reader.readAsDataURL(file); // This will convert the image to base64 format
         }
     };
 
     // Handle body part selection
     const handleBodyPartChange = (e) => {
         setBodyPart(e.target.value);
+    };
+
+    // Handle form submission
+    const handleSubmit = async () => {
+        if (!uploadedImage || !bodyPart) {
+            alert("Please upload an image and select a body part.");
+            return;
+        }
+
+        // Prepare the payload
+        const payload = {
+            image: uploadedImage,
+            sex: pgender,
+            age_approx: page,
+            anatom_site_general_challenge: 'lower extremity'
+        };
+
+        try {
+            const response = await fetch('http://localhost:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                alert(`Error: ${data.error}`);
+            } else {
+                alert(`Prediction: ${data.prediction}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while making the prediction.');
+        }
     };
 
     return (
@@ -95,6 +137,7 @@ export default function Diagnose() {
                     <div className="w-full flex justify-center">
                         <button
                             className="w-1/2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={handleSubmit}
                         >
                             Submit
                         </button>
