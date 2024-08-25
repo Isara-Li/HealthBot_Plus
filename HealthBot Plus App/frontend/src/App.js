@@ -4,11 +4,13 @@ import React from "react";
 import LoginSignup from "./pages/login_signup";
 import Signup from "./pages/signup";
 import Home from "./pages/Home.jsx";
-import Patient from "./components/dashboards/patient";
+import Patient from "./pages/patient.jsx";
 import Report from "./pages/report";
-import Doctor from "./components/dashboards/doctor";
+import Doctor from "./pages/doctor.jsx";
 import DoctorReview from "./pages/doctorReview";
 import Login from "./pages/login.js";
+import Diagnose from "./pages/diagnose";
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         <Route path="/report/:reportId" element={<Report />} />
         <Route path="/doctor" element={<Doctor />} />
         <Route path="/doctor-review/:reportId" element={<DoctorReview />} />
+        <Route path="/diagnose" element={<Diagnose />} />
       </Routes>
     </Router>
   );

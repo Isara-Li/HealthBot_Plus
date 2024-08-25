@@ -1,67 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../tailwind.css";
 
-const Patient = ({ productLogo }) => {
-  const [patientData, setPatientData] = useState(null);
+const Doctor = ({ productLogo }) => {
+  const [doctorData, setDoctorData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [reports, setReports] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPatientData();
+    fetchDoctorData();
     fetchReportHistory();
   }, []);
 
-  const fetchPatientData = async () => {
+  const fetchDoctorData = async () => {
     const data = {
-      id: "12345",
-      name: "John Doe",
-      age: 45,
-      gender: "Male",
+      id: "D12345",
+      name: "Dr. Jane Smith",
+      specialization: "Dermatology",
       contact: "+1234567890",
-      address: "123 Main St, City, ZIP",
+      email: "jane.smith@hospital.com",
+      address: "456 Medical St, City, ZIP",
       profilePhoto: "https://via.placeholder.com/150",
     };
-    setPatientData(data);
+    setDoctorData(data);
   };
 
   const fetchReportHistory = async () => {
     const data = [
       {
         id: 1,
+        patientName: "John Doe",
         date: "2024-08-20",
         investigation: "Cancer",
-        status: "Reviewed",
-        reviewedOn: "2024-08-22",
+        status: "Pending",
       },
       {
         id: 2,
+        patientName: "Jane Doe",
         date: "2024-07-15",
         investigation: "Atopic Dermatitis",
-        status: "Pending",
-        reviewedOn: null,
+        status: "Reviewed",
       },
       {
         id: 3,
+        patientName: "Alice Johnson",
         date: "2023-06-10",
         investigation: "Benign Keratosis",
         status: "Reviewed",
-        reviewedOn: "2023-06-12",
       },
       {
         id: 4,
+        patientName: "Bob Brown",
         date: "2024-05-05",
         investigation: "Dermatofibroma",
         status: "Pending",
-        reviewedOn: null,
-      },
-      {
-        id: 5,
-        date: "2023-04-01",
-        investigation: "Actinic Keratosis",
-        status: "Reviewed",
-        reviewedOn: "2023-04-03",
       },
     ];
     setReports(data);
@@ -76,7 +68,23 @@ const Patient = ({ productLogo }) => {
   };
 
   const handleReportClick = (reportId) => {
-    navigate(`/report/${reportId}`);
+    navigate(`/doctor-review/${reportId}`);
+  };
+
+  const handleMarkAsReviewed = (reportId) => {
+    setReports(
+      reports.map((report) =>
+        report.id === reportId ? { ...report, status: "Reviewed" } : report
+      )
+    );
+  };
+
+  const handleMarkAsPending = (reportId) => {
+    setReports(
+      reports.map((report) =>
+        report.id === reportId ? { ...report, status: "Pending" } : report
+      )
+    );
   };
 
   const totalReports = reports.length;
@@ -87,7 +95,7 @@ const Patient = ({ productLogo }) => {
     (report) => report.status === "Pending"
   ).length;
 
-  if (!patientData)
+  if (!doctorData)
     return <div className="text-center text-gray-500">Loading...</div>;
 
   return (
@@ -99,17 +107,17 @@ const Patient = ({ productLogo }) => {
           className="w-32 h-auto"
         />
         <div className="flex space-x-6">
-          <div className="text-center">
+          <div className="doctor-stat-item text-center">
             <p className="text-sm text-gray-600">Total Reports</p>
             <p className="text-3xl font-bold text-gray-800">{totalReports}</p>
           </div>
-          <div className="text-center">
+          <div className="doctor-stat-item text-center">
             <p className="text-sm text-gray-600">Reviewed Reports</p>
             <p className="text-3xl font-bold text-gray-800">
               {reviewedReports}
             </p>
           </div>
-          <div className="text-center">
+          <div className="doctor-stat-item text-center">
             <p className="text-sm text-gray-600">Pending Reports</p>
             <p className="text-3xl font-bold text-gray-800">{pendingReports}</p>
           </div>
@@ -119,26 +127,24 @@ const Patient = ({ productLogo }) => {
       <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
         <div className="flex items-center">
           <img
-            src={patientData.profilePhoto}
+            src={doctorData.profilePhoto}
             alt="Profile"
             className="w-24 h-24 rounded-full border-2 border-gray-300"
           />
           <div className="ml-6">
             <h1 className="text-2xl font-semibold text-gray-800">
-              {patientData.name}
+              {doctorData.name}
             </h1>
+            <p className="text-lg text-gray-600">Doctor ID: {doctorData.id}</p>
             <p className="text-lg text-gray-600">
-              Patient ID: {patientData.id}
-            </p>
-            <p className="text-lg text-gray-600">Age: {patientData.age}</p>
-            <p className="text-lg text-gray-600">
-              Gender: {patientData.gender}
+              Specialization: {doctorData.specialization}
             </p>
             <p className="text-lg text-gray-600">
-              Contact: {patientData.contact}
+              Contact: {doctorData.contact}
             </p>
+            <p className="text-lg text-gray-600">Email: {doctorData.email}</p>
             <p className="text-lg text-gray-600">
-              Address: {patientData.address}
+              Address: {doctorData.address}
             </p>
             <button
               className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
@@ -153,46 +159,49 @@ const Patient = ({ productLogo }) => {
           <div className="mt-8">
             <input
               type="text"
-              className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-              value={patientData.name}
+              className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
+              value={doctorData.name}
               onChange={(e) =>
-                setPatientData({ ...patientData, name: e.target.value })
+                setDoctorData({ ...doctorData, name: e.target.value })
               }
               placeholder="Name"
             />
             <input
               type="text"
-              className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-              value={patientData.age}
+              className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
+              value={doctorData.specialization}
               onChange={(e) =>
-                setPatientData({ ...patientData, age: e.target.value })
+                setDoctorData({
+                  ...doctorData,
+                  specialization: e.target.value,
+                })
               }
-              placeholder="Age"
+              placeholder="Specialization"
             />
             <input
               type="text"
-              className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-              value={patientData.gender}
+              className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
+              value={doctorData.contact}
               onChange={(e) =>
-                setPatientData({ ...patientData, gender: e.target.value })
-              }
-              placeholder="Gender"
-            />
-            <input
-              type="text"
-              className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-              value={patientData.contact}
-              onChange={(e) =>
-                setPatientData({ ...patientData, contact: e.target.value })
+                setDoctorData({ ...doctorData, contact: e.target.value })
               }
               placeholder="Contact"
             />
             <input
-              type="text"
-              className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-              value={patientData.address}
+              type="email"
+              className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
+              value={doctorData.email}
               onChange={(e) =>
-                setPatientData({ ...patientData, address: e.target.value })
+                setDoctorData({ ...doctorData, email: e.target.value })
+              }
+              placeholder="Email"
+            />
+            <input
+              type="text"
+              className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
+              value={doctorData.address}
+              onChange={(e) =>
+                setDoctorData({ ...doctorData, address: e.target.value })
               }
               placeholder="Address"
             />
@@ -221,45 +230,67 @@ const Patient = ({ productLogo }) => {
         <table className="min-w-full bg-white border rounded-lg overflow-hidden">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-3 text-left text-sm font-semibold text-gray-600">
+              <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600">
                 Report ID
               </th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-600">
+              <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600">
+                Patient Name
+              </th>
+              <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600">
                 Date
               </th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-600">
+              <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600">
                 Investigation
               </th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-600">
+              <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600">
                 Status
               </th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                Reviewed On
-              </th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-600">
+              <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {reports.map((report) => (
-              <tr key={report.id} className="hover:bg-gray-50 transition">
-                <td className="p-3 text-sm text-gray-700">{report.id}</td>
-                <td className="p-3 text-sm text-gray-700">{report.date}</td>
-                <td className="p-3 text-sm text-gray-700">
+              <tr key={report.id} className="doctor-table-row">
+                <td className="doctor-table-td p-3 text-sm text-gray-700">
+                  {report.id}
+                </td>
+                <td className="doctor-table-td p-3 text-sm text-gray-700">
+                  {report.patientName}
+                </td>
+                <td className="doctor-table-td p-3 text-sm text-gray-700">
+                  {report.date}
+                </td>
+                <td className="doctor-table-td p-3 text-sm text-gray-700">
                   {report.investigation}
                 </td>
-                <td className="p-3 text-sm text-gray-700">{report.status}</td>
-                <td className="p-3 text-sm text-gray-700">
-                  {report.reviewedOn || "N/A"}
+                <td className="doctor-table-td p-3 text-sm text-gray-700">
+                  {report.status}
                 </td>
-                <td className="p-3">
+                <td className="doctor-table-td p-3 flex space-x-2">
                   <button
-                    className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+                    className="doctor-view-button bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300"
                     onClick={() => handleReportClick(report.id)}
                   >
-                    View Full Report
+                    Review Report
                   </button>
+                  {report.status === "Pending" && (
+                    <button
+                      className="doctor-view-button bg-green-500 text-white py-1 px-4 rounded-md hover:bg-green-600 transition duration-300"
+                      onClick={() => handleMarkAsReviewed(report.id)}
+                    >
+                      Mark as Reviewed
+                    </button>
+                  )}
+                  {report.status === "Reviewed" && (
+                    <button
+                      className="doctor-view-button bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 transition duration-300"
+                      onClick={() => handleMarkAsPending(report.id)}
+                    >
+                      Mark as Pending
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -270,4 +301,4 @@ const Patient = ({ productLogo }) => {
   );
 };
 
-export default Patient;
+export default Doctor;
