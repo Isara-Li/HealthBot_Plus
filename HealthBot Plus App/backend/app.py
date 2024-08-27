@@ -5,6 +5,10 @@ import tensorflow as tf
 import numpy as np
 import base64
 import cv2
+from transformers import AutoModel, AutoProcessor, AutoTokenizer
+import torch
+from PIL import Image
+from transformers import SwinForImageClassification, AutoConfig, AutoProcessor
 
 app = Flask(__name__)
 CORS(app)
@@ -56,9 +60,40 @@ def predict():
     
     # Convert prediction to a human-readable format
     prediction_class = np.argmax(prediction, axis=-1)[0]
+
+    if prediction_class == 0:
+        #Benign
+        disease_prediction = predict_disease(image)
+        return jsonify({'prediction': 'Benign', 'disease_prediction': disease_prediction})
     
     # Return the prediction
-    return jsonify({'prediction': int(prediction_class)})
+    return jsonify({'prediction': 'Malignant'})
+
+
+
+# Load model configuration
+config = AutoConfig.from_pretrained(r"C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\disease_modal\config.json")
+
+# Initialize model with the configuration
+model = SwinForImageClassification.from_pretrained(r"C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\disease_modal\model.safetensors", config=config)
+
+# Initialize the processor (you might need to use AutoFeatureExtractor if AutoProcessor doesn't work)
+processor = AutoProcessor.from_pretrained(r"C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\disease_modal\config.json")
+
+
+def predict_disease(image):
+   
+    # Preprocess the image for the model
+    inputs = processor(images=image, return_tensors="pt")
+    
+    # Perform inference
+    with torch.no_grad():
+        outputs = model(**inputs)
+    
+    # Process the outputs as required
+    predictions = outputs.logits.argmax(dim=-1).item()
+    
+    return jsonify({'prediction': predictions})
 
 if __name__ == '__main__':
     app.run(debug=True)
