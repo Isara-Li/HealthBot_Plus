@@ -1,9 +1,14 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Login = () => {
   return (
-    <div
+    <motion.div
       className="flex items-center justify-end h-screen w-screen bg-cover pr-60"
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
       style={{ backgroundImage: "url('/images/login_background.jpg')" }}
     >
       <div className="bg-white p-6 rounded-xl shadow-lg max-w-xs w-1/2">
@@ -30,7 +35,7 @@ const Login = () => {
           Log In
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
