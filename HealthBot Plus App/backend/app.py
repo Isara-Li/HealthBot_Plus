@@ -40,7 +40,16 @@ disease_model = tf.keras.Sequential([
     model_layer
 ])
 
-# Function to preprocess the image
+lesion_type_dict = {
+    0: 'Melanocytic-nevi',
+    1: 'Melanoma',
+    2: 'Benign-keratosis-like-lesions',
+    3: 'Basal-cell-carcinoma',
+    4: 'Actinic-keratoses',
+    5: 'Vascular-lesions',
+    6: 'Dermatofibroma'
+}
+
 def preprocess_image_for_melanoma(image):
     #image = tf.image.decode_jpeg(image, channels=3)
     image = tf.image.resize(image, (128, 128))
@@ -52,12 +61,13 @@ def preprocess_image_for_melanoma(image):
 def predict():
     data = request.json
     
-    # Extracting data from the request
-    #sex = data['sex']
-    sex = 0
-    #age_approx = float(data['age_approx'])
-    age_approx = 70.0
-    #anatom_site_general_challenge = data['anatom_site_general_challenge']
+
+    
+    sex = data['sex']
+ 
+    age_approx = float(data['age_approx'])
+    anatom_site_general_challenge = data['anatom_site_general_challenge']
+    print("Isara Liyanage",anatom_site_general_challenge)
     anatom_site_general_challenge = 0
 
     
@@ -69,14 +79,12 @@ def predict():
     except tf.errors.InvalidArgumentError:
         return jsonify({'error': 'Invalid base64 string'}), 400
     
-    # Preprocess the image
+
     processed_image = preprocess_image_for_melanoma(image)
     
-    # Prepare the input for the model (this part will vary depending on the actual model input requirements)
     patient_data = [sex, age_approx, anatom_site_general_challenge]
     patient_data = np.array(patient_data).reshape((1, -1))  # Adjust the shape as per model requirement
     
-    # Expand dimensions for the image to match the batch size (1 in this case)
     processed_image = tf.expand_dims(processed_image, axis=0)
     
     # Perform the prediction
@@ -89,6 +97,7 @@ def predict():
         # Benign
         disease_prediction = predict_disease(image, disease_model, feature_extractor)
         disease_prediction = int(disease_prediction)
+        disease_prediction = lesion_type_dict[disease_prediction]
         get_xai(image)
         return jsonify({
             'prediction': 'Benign', 
@@ -102,21 +111,15 @@ def predict():
 
 
 def preprocess_image(image, feature_extractor):
-    # Load the image
 
     # Preprocess the image using the feature extractor
     inputs = feature_extractor(images=image, return_tensors="tf")
     return inputs['pixel_values']
 
 def predict_disease(image, model, feature_extractor):
-    # Preprocess the image
     pixel_values = preprocess_image(image, feature_extractor)
-
-    # Get predictions from the model
     outputs = model(pixel_values)
     
-    # Extract the relevant tensor from the outputs (e.g., 'logits' or 'logits' if it's a classification model)
-    # For instance, if 'logits' is the key you want to use for prediction:
     print("Isara",outputs)
     if isinstance(outputs, dict):
         logits = outputs['logits']
@@ -131,19 +134,15 @@ def predict_disease(image, model, feature_extractor):
 
 
 def load_and_preprocess_image_xai(image, target_size=(224, 224, 3)):
-    # Assuming image is already a NumPy array; resize and scale it
     img = cv2.resize(image, (224, 224))
     img_array = img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
-    img_array = img_array / 255.0  # Assuming the model expects inputs in the range [0, 1]
+    img_array = img_array / 255.0 
     return img_array
 
 
 def get_xai(image,save_dir='./static/xai_images/'):
-   # Ensure the save directory exists
     os.makedirs(save_dir, exist_ok=True)
-
-    # Load and preprocess a sample image
     X_sample = load_and_preprocess_image_xai(image)
 
     # Initialize LIME explainer
@@ -151,24 +150,24 @@ def get_xai(image,save_dir='./static/xai_images/'):
 
     # Explain the image
     explanation = explainer.explain_instance(
-        X_sample[0].astype('double'),  # The image you want to explain
-        model_xai.predict,             # The prediction function of your model
-        top_labels=2,                  # Number of top labels to consider
-        hide_color=0,                  # Color to hide parts of the image (black in this case)
-        num_samples=1000               # Number of perturbed samples to generate
+        X_sample[0].astype('double'),  
+        model_xai.predict,            
+        top_labels=2,                  
+        hide_color=0,                 
+        num_samples=1000              
     )
 
     # Visualize the explanation
     temp, mask = explanation.get_image_and_mask(
-        explanation.top_labels[0],     # The top predicted label
-        positive_only=True,            # Show only positive contributions
-        num_features=5,                # Number of features to highlight
-        hide_rest=True                 # Hide the non-important parts of the image
+        explanation.top_labels[0],    
+        positive_only=True,           
+        num_features=5,                
+        hide_rest=True                 
     )
 
     plt.imshow(mark_boundaries(temp / 2 + 0.5, mask))  # Display the image with boundaries around important features
 
-    # Define the file path where the image will be saved
+
     image_path = os.path.join(save_dir, 'xai_image.png')
 
     # Save the plot as an image file
