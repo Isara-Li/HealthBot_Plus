@@ -194,10 +194,6 @@ const DoctorReview = () => {
           )}
         </div>
       </div>
-      <button className="fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl p-2 flex items-center hover:bg-blue-700">
-        <FaRocketchat size={14} style={{ color: "white" }} />
-        <div className="w-2"></div> Want to chat?
-      </button>
     </motion.div>
   );
 };
