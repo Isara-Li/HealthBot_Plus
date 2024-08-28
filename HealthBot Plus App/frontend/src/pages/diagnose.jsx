@@ -70,7 +70,8 @@ export default function Diagnose() {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                alert(`Prediction: ${data.prediction}`);
+                console.log(data);
+                /*alert(`Prediction: ${data.prediction}`);*/
             }
         } catch (error) {
             console.error('Error:', error);
