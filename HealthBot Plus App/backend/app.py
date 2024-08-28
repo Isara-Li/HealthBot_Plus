@@ -103,9 +103,9 @@ def predict_disease(image, model, feature_extractor):
     
     # Extract the relevant tensor from the outputs (e.g., 'logits' or 'logits' if it's a classification model)
     # For instance, if 'logits' is the key you want to use for prediction:
-    print("Isara",outputs['pooler_output'])
+    print("Isara",outputs)
     if isinstance(outputs, dict):
-        logits = outputs['pooler_output']
+        logits = outputs['logits']
     else:
         logits = outputs
 
