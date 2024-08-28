@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../components/navbar";
+import { FaRocketchat } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Counter = ({ end }) => {
@@ -132,6 +133,10 @@ const SkinVisionPage = () => {
           </div>
         </div>
       </section>
+      <button className="fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl p-2 flex items-center hover:bg-blue-700">
+        <FaRocketchat size={14} style={{ color: "white" }} />
+        <div className="w-2"></div> want to chat?
+      </button>
     </motion.div>
   );
 };
