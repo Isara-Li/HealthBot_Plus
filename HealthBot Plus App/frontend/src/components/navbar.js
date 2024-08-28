@@ -6,17 +6,21 @@ function Navbar() {
   const navigate = useNavigate();
 
   const links_1 = [
-    { label: "Option 1", href: "#" },
-    { label: "Option 2", href: "#" },
-    { label: "Option 3", href: "#" },
+    { label: "About", href: "#" },
+    { label: "Medical Awards", href: "#" },
+   
   ];
 
   const links = [
-    { label: "Option 1", href: "#" },
-    { label: "Option 2", href: "#" },
-    { label: "Option 3", href: "#" },
+    { label: "Malanoma Detection", href: "#" },
+    { label: "Skin Diseases", href: "#" },
+    { label: "ChatBot", href: "#" },
   ];
 
+  const links_2 = [
+    { label: "Patient Stories", href: "#" },
+    { label: "Doctor Stories", href: "#" },
+  ];
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
   };
@@ -35,7 +39,7 @@ function Navbar() {
             <NavbarButton label="Skin Health" links={links} />
           </div>
           <div className="flex-1 flex justify-center items-center bg-black">
-            <NavbarButton label="Stories" links={links} />
+            <NavbarButton label="Stories" links={links_2} />
           </div>
           <div
             className="flex-1 hover:bg-slate-200 transform transition duration-400 flex justify-center items-center font-semibold cursor-pointer"

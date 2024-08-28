@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Navbar from "../components/navbar";
 import { FaRocketchat } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -62,6 +63,7 @@ const Counter = ({ end }) => {
 const SkinVisionPage = () => {
   const [chatClicked, setChatClicked] = useState(false);
   const [showRecorder, setShowRecorder] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     let timer;
@@ -75,6 +77,10 @@ const SkinVisionPage = () => {
 
     return () => clearTimeout(timer); // Cleanup timer if chatClicked changes before the timer completes
   }, [chatClicked]);
+
+  const handleTrySkinVisionClick = () => {
+    navigate("/diagnose"); // Navigate to the /diagnose page
+  };
 
   return (
     <motion.div
@@ -101,7 +107,10 @@ const SkinVisionPage = () => {
             <h1 className="text-6xl font-bold my-4 space-x-4">
               Are your moles getting under your skin?
             </h1>
-            <button className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4">
+            <button
+              onClick={handleTrySkinVisionClick} // Handle the button click
+              className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
+            >
               Try SkinVision
             </button>
           </div>
@@ -154,9 +163,8 @@ const SkinVisionPage = () => {
 
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${
-          chatClicked ? "w-96 h-64" : "w-40 h-10 justify-center bg-blue-700"
-        }`}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-64" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
       >
         {chatClicked ? (
           <div className="flex flex-col items-start justify-center">
