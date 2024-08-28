@@ -19,11 +19,22 @@ export default function Diagnose() {
         "Email - liyanageisara@gmail.com",
     ];
 
+    // Dictionary to encode body part
+    const bodyPartEncoding = {
+        'head/neck': 0,
+        'lower extremity': 1,
+        'oral/genital': 2,
+        'palms/soles': 3,
+        'torso': 4,
+        'unknown': 5,
+        'upper extremity': 6
+    };
+
     // State to store uploaded image and selected body part
     const [uploadedImage, setUploadedImage] = useState(null);
     const [bodyPart, setBodyPart] = useState("");
-    const pgender = "female"; // Sex attribute for the model (can be male/female)
-    const page = 50.0; // Age_approx attribute for the model
+    const pgender = "female";
+    const page = 70.0;
 
     // Handle image upload
     const handleImageUpload = (e) => {
@@ -49,12 +60,15 @@ export default function Diagnose() {
             return;
         }
 
+        // Encode the selected body part
+        const encodedBodyPart = bodyPartEncoding[bodyPart] || bodyPartEncoding['unknown'];
+
         // Prepare the payload
         const payload = {
             image: uploadedImage,
-            sex: pgender,
+            sex: pgender === 'male' ? 1 : 0,
             age_approx: page,
-            anatom_site_general_challenge: 'lower extremity'
+            anatom_site_general_challenge: encodedBodyPart
         };
 
         try {
@@ -70,7 +84,8 @@ export default function Diagnose() {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                alert(`Prediction: ${data.prediction}`);
+                console.log(data);
+                /*alert(`Prediction: ${data.prediction}`);*/
             }
         } catch (error) {
             console.error('Error:', error);
@@ -130,7 +145,8 @@ export default function Diagnose() {
                         <option value="lower extremity">Lower Extremity</option>
                         <option value="torso">Torso</option>
                         <option value="head/neck">Head/Neck</option>
-                        <option value="palm/soles">Palm/Soles</option>
+                        <option value="palms/soles">Palm/Soles</option>
+                        <option value="oral/genital">Oral/Genital</option>
                     </select>
 
                     {/* Submit button */}
