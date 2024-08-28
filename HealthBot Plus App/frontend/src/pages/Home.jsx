@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../components/navbar";
 import { FaRocketchat } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Counter = ({ end }) => {
   const [count, setCount] = useState(0);
@@ -58,7 +59,12 @@ const Counter = ({ end }) => {
 
 const SkinVisionPage = () => {
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="App">
         <Navbar />
       </div>
@@ -131,7 +137,7 @@ const SkinVisionPage = () => {
         <FaRocketchat size={14} style={{ color: "white" }} />
         <div className="w-2"></div> want to chat?
       </button>
-    </div>
+    </motion.div>
   );
 };
 
