@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import "../tailwind.css";
 
 const DoctorReview = () => {
@@ -45,7 +46,13 @@ const DoctorReview = () => {
     return <div className="text-center text-gray-500">Loading...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
+    <motion.div
+      className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen"
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex justify-between items-center mb-6">
         <img
           src={"/images/SkinVision-Logo.png"}
@@ -118,7 +125,7 @@ const DoctorReview = () => {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

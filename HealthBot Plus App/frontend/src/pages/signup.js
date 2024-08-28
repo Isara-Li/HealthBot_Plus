@@ -4,6 +4,7 @@ import {
   faArrowRightLong,
   faArrowLeftLong,
 } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [step, setStep] = useState(1);
@@ -26,46 +27,50 @@ const Signup = () => {
   };
 
   return (
-    <div
-      className="flex items-center justify-end min-h-screen bg-cover bg-center pr-60"
+    <motion.div
+      className="flex items-center justify-end h-screen w-screen bg-cover bg-center pr-60"
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
       style={{ backgroundImage: "url('/images/signup_background.jpg')" }}
     >
       <div
-        className={`bg-white p-8 rounded-xl shadow-lg max-w-md w-full transform transition-opacity duration-300 ${
+        className={`bg-white p-6 rounded-xl shadow-lg max-w-xs w-1/2 transform transition-opacity duration-300 ${
           transitionStage === "fadeIn" ? "opacity-100" : "opacity-0"
         }`}
       >
         {step === 1 && (
           <>
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
               Enter Your Details
             </h2>
-            <div className="mb-4">
-              <label className="block text-gray-700">Name</label>
+            <div className="mb-3">
+              <label className="block text-gray-700 text-sm">Name</label>
               <input
                 type="text"
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Enter your name"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Country</label>
+            <div className="mb-3">
+              <label className="block text-gray-700 text-sm">Country</label>
               <input
                 type="text"
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Enter your country"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Birthday</label>
+            <div className="mb-3">
+              <label className="block text-gray-700 text-sm">Birthday</label>
               <input
                 type="date"
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 opacity-75"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Sex</label>
-              <select className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <div className="mb-3">
+              <label className="block text-gray-700 text-sm">Sex</label>
+              <select className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 opacity-75">
                 <option value="">Select</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -73,20 +78,27 @@ const Signup = () => {
                 <option value="prefer_not_to_say">Prefer not to say</option>
               </select>
             </div>
-            <div className="mb-6">
-              <label className="block text-gray-700">Description</label>
+            <div className="mb-5">
+              <label className="block text-gray-700 text-sm">Description</label>
               <textarea
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 rows="3"
                 placeholder="Tell us about yourself"
               ></textarea>
             </div>
             <div className="flex justify-end">
+              {/* <button
+                onClick={handleNextStep}
+                className="flex items-center justify-center w-10 h-10 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-transform transform hover:scale-105"
+              >
+                <FontAwesomeIcon icon={faArrowRightLong} size="sm" />
+              </button> */}
+
               <button
                 onClick={handleNextStep}
-                className="flex items-center justify-center w-12 h-12 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                className="px-6 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
               >
-                <FontAwesomeIcon icon={faArrowRightLong} size="lg" />
+                Next
               </button>
             </div>
           </>
@@ -94,48 +106,58 @@ const Signup = () => {
 
         {step === 2 && (
           <>
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
               Create Account
             </h2>
-            <div className="mb-4">
-              <label className="block text-gray-700">Email Address</label>
+            <div className="mb-3">
+              <label className="block text-gray-700 text-sm">
+                Email Address
+              </label>
               <input
                 type="email"
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Enter your email"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Password</label>
+            <div className="mb-3">
+              <label className="block text-gray-700 text-sm">Password</label>
               <input
                 type="password"
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Enter your password"
               />
             </div>
-            <div className="mb-6">
-              <label className="block text-gray-700">Confirm Password</label>
+            <div className="mb-5">
+              <label className="block text-gray-700 text-sm">
+                Confirm Password
+              </label>
               <input
                 type="password"
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Confirm your password"
               />
             </div>
             <div className="flex justify-between items-center">
+              {/* <button
+                onClick={handlePreviousStep}
+                className="flex items-center justify-center w-10 h-10 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-transform transform hover:scale-105"
+              >
+                <FontAwesomeIcon icon={faArrowLeftLong} size="sm" />
+              </button> */}
               <button
                 onClick={handlePreviousStep}
-                className="flex items-center justify-center w-12 h-12 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                className="px-6 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
               >
-                <FontAwesomeIcon icon={faArrowLeftLong} size="lg" />
+                Back
               </button>
-              <button className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105">
+              <button className="px-3 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105">
                 Sign Up
               </button>
             </div>
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

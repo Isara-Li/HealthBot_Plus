@@ -22,9 +22,9 @@ function Navbar() {
   };
 
   return (
-    <div className="flex bg-slate-100 h-18 font-sans">
+    <div className="flex bg-white border border-slate-200 h-18 font-sans z-[999] relative">
       <div className="w-1/4 flex justify-center items-center">
-        <img src={"images/SkinVision-Logo.png"} alt="Logo" className="h-4/5" />
+        <img src={"images/HealthBot+.PNG"} alt="Logo" className="h-5/6" />
       </div>
       <div className="w-3/4 flex justify-center">
         <div className="w-4/5 h-full flex">
@@ -38,7 +38,7 @@ function Navbar() {
             <NavbarButton label="Stories" links={links} />
           </div>
           <div
-            className="flex-1 hover:bg-blue-100 transform transition duration-400 flex justify-center items-center font-semibold cursor-pointer"
+            className="flex-1 hover:bg-slate-200 transform transition duration-400 flex justify-center items-center font-semibold cursor-pointer"
             onClick={handleLoginSignupClick}
           >
             Login / SignUp
