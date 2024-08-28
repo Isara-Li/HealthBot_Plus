@@ -18,11 +18,7 @@ const Report = () => {
           status: "Reviewed",
           reviewedOn: "2023-08-22",
           details: `
-            This report investigates the presence of cancerous cells in the biopsy taken from the patient's skin. 
-            The pathology results indicate the presence of malignant melanoma. The lesion was excised, and 
-            margins were checked for clearance. Immunohistochemical staining confirmed the diagnosis, 
-            with markers such as S-100, HMB-45, and Melan-A showing positive results. The tumor thickness 
-            was measured at 1.2 mm, placing it in the intermediate risk category according to the Breslow scale.
+            This report investigates the presence of cancerous cells in the biopsy taken from the patient's skin.The pathology results indicate the presence of malignant melanoma. The lesion was excised, and margins were checked for clearance. Immunohistochemical staining confirmed the diagnosis,with markers such as S-100, HMB-45, and Melan-A showing positive results. The tumor thickness was measured at 1.2 mm, placing it in the intermediate risk category according to the Breslow scale.
           `,
         },
         2: {
@@ -32,11 +28,7 @@ const Report = () => {
           status: "Pending",
           reviewedOn: null,
           details: `
-            This report covers the examination of a skin sample to assess chronic inflammatory conditions. 
-            The clinical presentation, characterized by red, itchy patches, is consistent with Atopic Dermatitis.
-            Histopathological examination revealed epidermal spongiosis, hyperkeratosis, and infiltration of lymphocytes 
-            and eosinophils. There is no evidence of bacterial or fungal superinfection. Treatment with topical corticosteroids 
-            and moisturizers is recommended, along with avoiding known allergens.
+            This report covers the examination of a skin sample to assess chronic inflammatory conditions.The clinical presentation, characterized by red, itchy patches, is consistent with Atopic Dermatitis.Histopathological examination revealed epidermal spongiosis, hyperkeratosis, and infiltration of lymphocytes and eosinophils. There is no evidence of bacterial or fungal superinfection. Treatment with topical corticosteroids and moisturizers is recommended, along with avoiding known allergens.
           `,
         },
         3: {
@@ -46,11 +38,7 @@ const Report = () => {
           status: "Reviewed",
           reviewedOn: "2023-06-12",
           details: `
-            The biopsy specimen examined in this report was consistent with Benign Keratosis, particularly 
-            Seborrheic Keratosis. The lesion appeared as a well-demarcated, pigmented plaque with a verrucous surface.
-            Histologically, it showed hyperkeratosis, acanthosis, and the presence of pseudocysts filled with keratin.
-            No signs of malignancy were detected, and the lesion is considered benign. Regular monitoring is suggested 
-            due to the potential for similar lesions to appear in the future.
+            The biopsy specimen examined in this report was consistent with Benign Keratosis, particularly Seborrheic Keratosis. The lesion appeared as a well-demarcated, pigmented plaque with a verrucous surface.Histologically, it showed hyperkeratosis, acanthosis, and the presence of pseudocysts filled with keratin.No signs of malignancy were detected, and the lesion is considered benign. Regular monitoring is suggested due to the potential for similar lesions to appear in the future.
           `,
         },
         4: {
@@ -60,11 +48,7 @@ const Report = () => {
           status: "Pending",
           reviewedOn: null,
           details: `
-            The clinical findings suggest a Dermatofibroma, a common benign fibrous nodule often found on the legs. 
-            The lesion is firm, hyperpigmented, and mobile under the skin. Histopathological analysis shows a dense 
-            collection of fibroblasts and histiocytes, with a characteristic collagen trapping at the lesion's periphery.
-            No cellular atypia or signs of malignancy are present. Although benign, the lesion may persist indefinitely, 
-            and removal is only necessary if symptomatic.
+            The clinical findings suggest a Dermatofibroma, a common benign fibrous nodule often found on the legs.The lesion is firm, hyperpigmented, and mobile under the skin. Histopathological analysis shows a dense collection of fibroblasts and histiocytes, with a characteristic collagen trapping at the lesion's periphery.No cellular atypia or signs of malignancy are present. Although benign, the lesion may persist indefinitely, and removal is only necessary if symptomatic.
           `,
         },
         5: {
@@ -74,11 +58,7 @@ const Report = () => {
           status: "Reviewed",
           reviewedOn: "2023-04-03",
           details: `
-            Actinic Keratosis was confirmed through the biopsy of a rough, scaly patch on sun-exposed skin. 
-            The histopathology report indicates dysplasia in the basal layer of the epidermis, with signs of 
-            solar elastosis in the dermis. While considered precancerous, there is a risk of progression to 
-            squamous cell carcinoma if untreated. Cryotherapy or topical agents such as 5-fluorouracil or 
-            imiquimod are recommended for treatment, alongside sun protection measures.
+            Actinic Keratosis was confirmed through the biopsy of a rough, scaly patch on sun-exposed skin.The histopathology report indicates dysplasia in the basal layer of the epidermis, with signs of solar elastosis in the dermis. While considered precancerous, there is a risk of progression to squamous cell carcinoma if untreated. Cryotherapy or topical agents such as 5-fluorouracil or imiquimod are recommended for treatment, alongside sun protection measures.
           `,
         },
       };
@@ -108,7 +88,7 @@ const Report = () => {
     >
       <div className="flex justify-between items-center mb-8">
         <img
-          src={"/images/SkinVision-Logo.png"}
+          src={"/images/HealthBot+.PNG"}
           alt="Product Logo"
           className="w-32 h-auto"
         />
@@ -119,7 +99,9 @@ const Report = () => {
           Back to Dashboard
         </button>
       </div>
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Full Report</h1>
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6">
+        Medical Report
+      </h1>
       <div className="bg-white shadow-lg rounded-lg p-6">
         <p className="text-lg mb-4">
           <strong>Date:</strong> {report.date}
@@ -134,9 +116,9 @@ const Report = () => {
           <strong>Reviewed On:</strong> {report.reviewedOn || "N/A"}
         </p>
         <p className="text-lg mb-2">
-          <strong>Details:</strong>
+          <strong>Doctor's Feedback:</strong>
         </p>
-        <p className="whitespace-pre-line text-gray-700 bg-gray-50 p-4 rounded-lg">
+        <p className="whitespace-pre-line text-gray-700 bg-gray-50 p-4 rounded-lg text-justify">
           {report.details}
         </p>
       </div>
