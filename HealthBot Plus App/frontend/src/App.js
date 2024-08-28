@@ -10,7 +10,7 @@ import Doctor from "./pages/doctor.jsx";
 import DoctorReview from "./pages/doctorReview";
 import Login from "./pages/login.js";
 import Diagnose from "./pages/diagnose";
-
+import AudioRecorder from "./components/AudioRecorder.js";
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
         <Route path="/doctor" element={<Doctor />} />
         <Route path="/doctor-review/:reportId" element={<DoctorReview />} />
         <Route path="/diagnose" element={<Diagnose />} />
+        <Route path="/test" element={<AudioRecorder />} />
       </Routes>
     </Router>
   );
