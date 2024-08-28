@@ -1,0 +1,45 @@
+{
+    "os": "Windows-11-10.0.22631-SP0",
+    "python": "3.12.0",
+    "heartbeatAt": "2024-08-27T17:06:37.574383",
+    "startedAt": "2024-08-27T17:06:35.274906",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "c:\\Users\\Isara Liyanage\\Documents\\GitHub\\HealthBot_Plus\\HealthBot Plus App\\backend\\app.py",
+    "codePathLocal": "HealthBot Plus App\\backend\\app.py",
+    "codePath": "HealthBot Plus App\\backend\\app.py",
+    "git": {
+        "remote": "https://github.com/Isara-Li/HealthBot_Plus.git",
+        "commit": "4b3d0e7cd687f1c7ca05ac695ea3720b9ef26222"
+    },
+    "email": "vimandika.21@cse.mrt.ac.lk",
+    "root": "C:/Users/Isara Liyanage/Documents/GitHub/HealthBot_Plus",
+    "host": "LAPTOP-C4L9FNK2",
+    "username": "Isara Liyanage",
+    "executable": "C:\\Users\\Isara Liyanage\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1298.0,
+        "min": 0.0,
+        "max": 1498.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1298.0,
+            "min": 0.0,
+            "max": 1498.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 475.4426918029785,
+            "used": 429.13599014282227
+        }
+    },
+    "memory": {
+        "total": 15.673728942871094
+    }
+}

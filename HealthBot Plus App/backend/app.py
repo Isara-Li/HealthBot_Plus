@@ -9,12 +9,26 @@ from transformers import AutoModel, AutoProcessor, AutoTokenizer
 import torch
 from PIL import Image
 from transformers import SwinForImageClassification, AutoConfig, AutoProcessor
+import wandb
+from keras.layers import TFSMLayer
+from transformers import AutoFeatureExtractor
 
 app = Flask(__name__)
 CORS(app)
 
+
+
 # Load the pre-trained model
 melanoma_model = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin.h5')
+
+model_checkpoint = "microsoft/swin-tiny-patch4-window7-224"
+feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
+
+model_layer = TFSMLayer(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin_model', call_endpoint='serving_default')
+
+disease_model = tf.keras.Sequential([
+    model_layer
+])
 
 # Function to preprocess the image
 def preprocess_image_for_melanoma(image):
@@ -63,7 +77,8 @@ def predict():
 
     if prediction_class == 0:
         #Benign
-        disease_prediction = predict_disease(image)
+        disease_prediction = predict_disease(image,disease_model,feature_extractor)
+        disease_prediction = int(disease_prediction)
         return jsonify({'prediction': 'Benign', 'disease_prediction': disease_prediction})
     
     # Return the prediction
@@ -71,29 +86,35 @@ def predict():
 
 
 
-# Load model configuration
-config = AutoConfig.from_pretrained(r"C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\disease_modal\config.json")
 
-# Initialize model with the configuration
-model = SwinForImageClassification.from_pretrained(r"C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\disease_modal\model.safetensors", config=config)
+def preprocess_image(image, feature_extractor):
+    # Load the image
 
-# Initialize the processor (you might need to use AutoFeatureExtractor if AutoProcessor doesn't work)
-processor = AutoProcessor.from_pretrained(r"C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\disease_modal\config.json")
+    # Preprocess the image using the feature extractor
+    inputs = feature_extractor(images=image, return_tensors="tf")
+    return inputs['pixel_values']
 
+def predict_disease(image, model, feature_extractor):
+    # Preprocess the image
+    pixel_values = preprocess_image(image, feature_extractor)
 
-def predict_disease(image):
-   
-    # Preprocess the image for the model
-    inputs = processor(images=image, return_tensors="pt")
+    # Get predictions from the model
+    outputs = model(pixel_values)
     
-    # Perform inference
-    with torch.no_grad():
-        outputs = model(**inputs)
-    
-    # Process the outputs as required
-    predictions = outputs.logits.argmax(dim=-1).item()
-    
-    return jsonify({'prediction': predictions})
+    # Extract the relevant tensor from the outputs (e.g., 'logits' or 'logits' if it's a classification model)
+    # For instance, if 'logits' is the key you want to use for prediction:
+    print("Isara",outputs['pooler_output'])
+    if isinstance(outputs, dict):
+        logits = outputs['pooler_output']
+    else:
+        logits = outputs
+
+    # Get the predicted class label
+    predicted_label = tf.argmax(logits, axis=-1).numpy()[0]
+
+    return predicted_label
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
