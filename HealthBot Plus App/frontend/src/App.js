@@ -11,7 +11,6 @@ import DoctorReview from "./pages/doctorReview";
 import Login from "./pages/login.js";
 import Diagnose from "./pages/diagnose";
 
-
 function App() {
   return (
     <Router>
