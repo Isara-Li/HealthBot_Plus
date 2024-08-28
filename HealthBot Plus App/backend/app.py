@@ -12,6 +12,13 @@ from transformers import SwinForImageClassification, AutoConfig, AutoProcessor
 import wandb
 from keras.layers import TFSMLayer
 from transformers import AutoFeatureExtractor
+from tensorflow.keras.preprocessing import image
+from lime import lime_image
+from skimage.segmentation import mark_boundaries
+from tensorflow.keras.preprocessing.image import img_to_array
+import matplotlib.pyplot as plt
+import os
+
 
 app = Flask(__name__)
 CORS(app)
@@ -25,6 +32,9 @@ model_checkpoint = "microsoft/swin-tiny-patch4-window7-224"
 feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
 
 model_layer = TFSMLayer(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin_model', call_endpoint='serving_default')
+
+model_xai = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\model_xai.h5')
+
 
 disease_model = tf.keras.Sequential([
     model_layer
@@ -76,14 +86,18 @@ def predict():
     prediction_class = np.argmax(prediction, axis=-1)[0]
 
     if prediction_class == 0:
-        #Benign
-        disease_prediction = predict_disease(image,disease_model,feature_extractor)
+        # Benign
+        disease_prediction = predict_disease(image, disease_model, feature_extractor)
         disease_prediction = int(disease_prediction)
-        return jsonify({'prediction': 'Benign', 'disease_prediction': disease_prediction})
+        get_xai(image)
+        return jsonify({
+            'prediction': 'Benign', 
+            'disease_prediction': disease_prediction
+        })
     
     # Return the prediction
+    get_xai(image)
     return jsonify({'prediction': 'Malignant'})
-
 
 
 
@@ -115,6 +129,53 @@ def predict_disease(image, model, feature_extractor):
     return predicted_label
 
 
+
+def load_and_preprocess_image_xai(image, target_size=(224, 224, 3)):
+    # Assuming image is already a NumPy array; resize and scale it
+    img = cv2.resize(image, (224, 224))
+    img_array = img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = img_array / 255.0  # Assuming the model expects inputs in the range [0, 1]
+    return img_array
+
+
+def get_xai(image,save_dir='./static/xai_images/'):
+   # Ensure the save directory exists
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Load and preprocess a sample image
+    X_sample = load_and_preprocess_image_xai(image)
+
+    # Initialize LIME explainer
+    explainer = lime_image.LimeImageExplainer()
+
+    # Explain the image
+    explanation = explainer.explain_instance(
+        X_sample[0].astype('double'),  # The image you want to explain
+        model_xai.predict,             # The prediction function of your model
+        top_labels=2,                  # Number of top labels to consider
+        hide_color=0,                  # Color to hide parts of the image (black in this case)
+        num_samples=1000               # Number of perturbed samples to generate
+    )
+
+    # Visualize the explanation
+    temp, mask = explanation.get_image_and_mask(
+        explanation.top_labels[0],     # The top predicted label
+        positive_only=True,            # Show only positive contributions
+        num_features=5,                # Number of features to highlight
+        hide_rest=True                 # Hide the non-important parts of the image
+    )
+
+    plt.imshow(mark_boundaries(temp / 2 + 0.5, mask))  # Display the image with boundaries around important features
+
+    # Define the file path where the image will be saved
+    image_path = os.path.join(save_dir, 'xai_image.png')
+
+    # Save the plot as an image file
+    plt.savefig(image_path)
+    plt.close()
+
+    return None
 
 if __name__ == '__main__':
     app.run(debug=True)
