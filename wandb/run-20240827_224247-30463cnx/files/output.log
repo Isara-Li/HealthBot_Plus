@@ -1,0 +1,36 @@
+[34m[1mwandb[39m[22m: [32m[41mERROR[39m[49m project 'Projects' not found under entity 'vimandika-21-university-of-moratuwa'
+Traceback (most recent call last):
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\normalize.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\public\api.py", line 1034, in artifact
+    artifact = wandb.Artifact._from_name(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\artifacts\artifact.py", line 268, in _from_name
+    raise ValueError(f"project '{project}' not found under entity '{entity}'")
+ValueError: project 'Projects' not found under entity 'vimandika-21-university-of-moratuwa'
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "c:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\app.py", line 77, in <module>
+    artifact = run.use_artifact('vimandika-21-university-of-moratuwa/Projects/swin-tiny-patch4-window7-224-finetuned-skin-cancer:latest', type='model')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\wandb_run.py", line 401, in wrapper_fn
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\wandb_run.py", line 391, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\wandb_run.py", line 3024, in use_artifact
+    artifact = public_api.artifact(type=type, name=name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\normalize.py", line 87, in wrapper
+    raise CommError(message, err).with_traceback(sys.exc_info()[2])
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\normalize.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\public\api.py", line 1034, in artifact
+    artifact = wandb.Artifact._from_name(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\artifacts\artifact.py", line 268, in _from_name
+    raise ValueError(f"project '{project}' not found under entity '{entity}'")
+wandb.errors.CommError: project 'Projects' not found under entity 'vimandika-21-university-of-moratuwa'
