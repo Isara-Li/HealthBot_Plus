@@ -33,8 +33,8 @@ export default function Diagnose() {
     // State to store uploaded image and selected body part
     const [uploadedImage, setUploadedImage] = useState(null);
     const [bodyPart, setBodyPart] = useState("");
-    const pgender = "female";
-    const page = 70.0;
+    const pgender = "mlae";
+    const page = 75.0;
 
     // Handle image upload
     const handleImageUpload = (e) => {
