@@ -23,11 +23,14 @@ from flask import Flask, request, jsonify
 import requests
 import json
 from flask_cors import CORS
+from dotenv import load_dotenv
 import openai
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
+load_dotenv()
 
 # Load the pre-trained model
 melanoma_model = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin.h5')
@@ -39,9 +42,9 @@ model_layer = TFSMLayer(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plu
 
 model_xai = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\model_xai.h5')
 
-openai.api_key = "sk-ZjPyGb_zTnLPx-1ko4FGy5UGDQnEBxyRoNkrqklKe5T3BlbkFJWEjSwB0_jZZ4euSpAnyY9vksNqAPc5_Zg1iKnA3cwA"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-token_hugging_face = "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"
+token_hugging_face = os.getenv("HUGGING_FACE_TOKEN")
 headers = {"Authorization": f"Bearer {token_hugging_face}"}
 API_URL_RECOGNITION = "https://api-inference.huggingface.co/models/openai/whisper-tiny.en"
 API_URL_DIAGNOSTIC = "https://api-inference.huggingface.co/models/abhirajeshbhai/symptom-2-disease-net"
