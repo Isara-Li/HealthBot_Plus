@@ -1,6 +1,7 @@
 from flask import jsonify
 from datetime import datetime
 import bcrypt
+from bson import ObjectId  # Import to handle ObjectId
 
 def SignUp(request, db):
     # Get the user input
@@ -31,14 +32,29 @@ def SignUp(request, db):
         "age": age,
         "country": user_input['country'],
         "sex": user_input['sex'],
-        "password": hashed_password
+        "password": hashed_password,
+        "reports": []
     }
 
     # Insert the document into the collection
     result = collection.insert_one(patient_data)
+    print(result)
     print(f"Document inserted with ID: {result.inserted_id}")
+    
     if result.inserted_id is None:
         return jsonify({"status": "error", "message": "Failed to register user"}), 500
 
-    # Return success response
-    return jsonify({"status": "Ok", "message": "User successfully registered"}), 201
+    # Retrieve the newly inserted user document by its ID
+    new_user = collection.find_one({"_id": ObjectId(result.inserted_id)})
+
+    # Remove the password before returning the user information
+    if new_user:
+        new_user['_id'] = str(new_user['_id'])  # Convert ObjectId to string
+        del new_user['password']  # Remove the password field for security
+
+    # Return success response with user details
+    return jsonify({
+        "status": "Ok",
+        "user": new_user,
+        "message": "User successfully registered"
+    }), 201
