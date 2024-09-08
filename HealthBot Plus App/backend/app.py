@@ -6,10 +6,8 @@ import numpy as np
 import base64
 import cv2
 from transformers import AutoModel, AutoProcessor, AutoTokenizer
-import torch
 from PIL import Image
 from transformers import SwinForImageClassification, AutoConfig, AutoProcessor
-import wandb
 from keras.layers import TFSMLayer
 from transformers import AutoFeatureExtractor
 from tensorflow.keras.preprocessing import image
@@ -18,41 +16,40 @@ from skimage.segmentation import mark_boundaries
 from tensorflow.keras.preprocessing.image import img_to_array
 import matplotlib.pyplot as plt
 import os
-import openai
 from flask import Flask, request, jsonify
 import requests
 import json
 from flask_cors import CORS
 from dotenv import load_dotenv
 import openai
+from chatbot import diagnose
+from pymongo import MongoClient
+from SignUp import SignUp
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-load_dotenv()
+
+mongo_uri = 'mongodb+srv://isara:isara@healthbot.p5i8q.mongodb.net/healthbot?retryWrites=true&w=majority&appName=healthbot'
+client = MongoClient(mongo_uri)
+
+db = client['healthbot'] 
 
 # Load the pre-trained model
-melanoma_model = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin.h5')
+#melanoma_model = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin.h5')
 
-model_checkpoint = "microsoft/swin-tiny-patch4-window7-224"
-feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
+#model_checkpoint = "microsoft/swin-tiny-patch4-window7-224"
+#feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
 
-model_layer = TFSMLayer(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin_model', call_endpoint='serving_default')
+#model_layer = TFSMLayer(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin_model', call_endpoint='serving_default')
 
-model_xai = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\model_xai.h5')
+#model_xai = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\model_xai.h5')
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-token_hugging_face = os.getenv("HUGGING_FACE_TOKEN")
-headers = {"Authorization": f"Bearer {token_hugging_face}"}
-API_URL_RECOGNITION = "https://api-inference.huggingface.co/models/openai/whisper-tiny.en"
-API_URL_DIAGNOSTIC = "https://api-inference.huggingface.co/models/abhirajeshbhai/symptom-2-disease-net"
-
-disease_model = tf.keras.Sequential([
-    model_layer
-])
-
+#disease_model = tf.keras.Sequential([
+#    model_layer
+#])
+disease_model=melanoma_model =model_xai=None;
 lesion_type_dict = {
     0: 'Melanocytic-nevi',
     1: 'Melanoma',
@@ -178,79 +175,24 @@ def get_xai(image,save_dir='./static/xai_images/'):
         hide_rest=True                 
     )
 
-    plt.imshow(mark_boundaries(temp / 2 + 0.5, mask))  # Display the image with boundaries around important features
+    plt.imshow(mark_boundaries(temp / 2 + 0.5, mask)) 
 
 
     image_path = os.path.join(save_dir, 'xai_image.png')
 
-    # Save the plot as an image file
     plt.savefig(image_path)
     plt.close()
 
     return None
 
-
-# Function to recognize speech using Hugging Face API
-def recognize_speech(audio_data):
-    response = requests.post(API_URL_RECOGNITION, headers=headers, data=audio_data)
-    response_content = response.content.decode("utf-8")
-    print("Voice Recognition API Response:", response_content)
-    try:
-        return json.loads(response_content)['text']
-    except KeyError:
-        return None
-
-# Function to generate diagnosis using OpenAI's GPT-3.5-turbo
-def diagnostic_medic(voice_text):
-    model_engine = "gpt-3.5-turbo"
-    
-    # Construct the message for the API
-    messages = [
-        {"role": "system", "content": "You are a medical expert."},
-        {"role": "user", "content": f"Diagnose the following symptoms: {voice_text}"}
-    ]
-    
-    # Call the OpenAI API
-    response = openai.ChatCompletion.create(
-        model=model_engine,  # Specify the model
-        messages=messages,  # User query as part of conversation
-        max_tokens=200,  # Max number of tokens for the response
-        n=1,  # Number of responses expected from Chat GPT
-        stop=None, 
-        temperature=0.5  # Making responses deterministic
-    )
-    
-    # Extract the response message content
-    message = response.choices[0].message['content'].strip()
-    
-    print("Disease Prediction API Response:", message)
-    
-    return message
-
-# Route to handle diagnosis requests
 @app.route('/chatbot', methods=['POST'])
-def diagnose():
-    if 'audio_file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-    
-    audio_file = request.files['audio_file']
-    audio_data = audio_file.read()
+def handle_diagnosis():
+    return diagnose(request)
 
-    # Recognize speech from audio
-    text = recognize_speech(audio_data)
-    print("Recognized text:", text)
-    
-    if text is None:
-        return jsonify({"error": "Failed to recognize speech"}), 500
-    
-    # Get diagnosis from recognized speech text
-    diagnosis = diagnostic_medic(text)
-    
-    if diagnosis is None:
-        return jsonify({"error": "Failed to predict disease"}), 500
-    
-    # Construct the JSON response
-    return jsonify({"text": text, "diagnosis": diagnosis})
+@app.route('/signup', methods=['POST'])
+def signup():
+    return SignUp(request,db)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

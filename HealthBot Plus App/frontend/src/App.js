@@ -8,7 +8,7 @@ import Patient from "./pages/patient.jsx";
 import Report from "./pages/report";
 import Doctor from "./pages/doctor.jsx";
 import DoctorReview from "./pages/doctorReview";
-import Login from "./pages/login.js";
+import Login from "./pages/login";
 import Diagnose from "./pages/diagnose";
 
 function App() {

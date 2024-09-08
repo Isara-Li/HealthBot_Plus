@@ -1,95 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faArrowRightLong,
+    faArrowLeftLong,
+} from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 import Navbar from "../components/navbar";
-import PatientCard from "../components/patient_card";
 
-export default function Diagnose() {
-    // Store the parameters in variables
-    const ptitle = "Isara Liyanage";
-    const pimageSrc = "https://cdn.vectorstock.com/i/500p/96/75/gray-scale-male-character-profile-picture-vector-51589675.jpg";
-    const pdescription = [
-        "ID - 12345",
-        "Gender - Male",
-        "Age - 22",
-    ];
-    const dtitle = "Dr. Fernando";
-    const dimageSrc = "https://cdn-icons-png.flaticon.com/512/3774/3774299.png";
-    const ddescription = [
-        "ID - 12345",
-        "Gender - Male",
-        "Email - liyanageisara@gmail.com",
-    ];
+const Signup = () => {
+    const [step, setStep] = useState(1);
+    const [transitionStage, setTransitionStage] = useState("fadeIn");
 
-    // Dictionary to encode body part
-    const bodyPartEncoding = {
-        'head/neck': 0,
-        'lower extremity': 1,
-        'oral/genital': 2,
-        'palms/soles': 3,
-        'torso': 4,
-        'unknown': 5,
-        'upper extremity': 6
+    // State to store form data
+    const [formData, setFormData] = useState({
+        name: "",
+        country: "",
+        birthday: "",
+        sex: "",
+        description: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
+
+    // Update form data
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
     };
 
-    // State to store uploaded image and selected body part
-    const [uploadedImage, setUploadedImage] = useState(null);
-    const [bodyPart, setBodyPart] = useState("");
-    const pgender = "mlae";
-    const page = 75.0;
-
-    // Handle image upload
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setUploadedImage(reader.result);
-            };
-            reader.readAsDataURL(file); // This will convert the image to base64 format
-        }
+    // Handle next step
+    const handleNextStep = () => {
+        setTransitionStage("fadeOut");
+        setTimeout(() => {
+            setStep(step + 1);
+            setTransitionStage("fadeIn");
+        }, 300);
     };
 
-    // Handle body part selection
-    const handleBodyPartChange = (e) => {
-        setBodyPart(e.target.value);
+    // Handle previous step
+    const handlePreviousStep = () => {
+        setTransitionStage("fadeOut");
+        setTimeout(() => {
+            setStep(step - 1);
+            setTransitionStage("fadeIn");
+        }, 300);
     };
 
     // Handle form submission
     const handleSubmit = async () => {
-        if (!uploadedImage || !bodyPart) {
-            alert("Please upload an image and select a body part.");
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
             return;
         }
 
-        // Encode the selected body part
-        const encodedBodyPart = bodyPartEncoding[bodyPart] || bodyPartEncoding['unknown'];
-
-        // Prepare the payload
-        const payload = {
-            image: uploadedImage,
-            sex: pgender === 'male' ? 1 : 0,
-            age_approx: page,
-            anatom_site_general_challenge: encodedBodyPart
-        };
-
+        // Sending data to the backend using fetch API
         try {
-            const response = await fetch('http://localhost:5000/predict', {
-                method: 'POST',
+            const response = await fetch("http://localhost:5000/signup", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(formData),
             });
 
-            const data = await response.json();
-            if (data.error) {
-                alert(`Error: ${data.error}`);
+            const result = await response.json();
+            if (response.ok) {
+                alert("Signup successful!");
             } else {
-                console.log(data);
-                /*alert(`Prediction: ${data.prediction}`);*/
+                alert(`Signup failed: ${result.message}`);
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while making the prediction.');
+            console.error("Error:", error);
+            alert("Error submitting form!");
         }
     };
 
@@ -98,68 +83,154 @@ export default function Diagnose() {
             <div className="App">
                 <Navbar />
             </div>
-
-            <div className="flex flex-wrap justify-between left-10 py-4 px-11">
-                {/* Patient card section */}
-                <PatientCard
-                    title={ptitle}
-                    imageSrc={pimageSrc}
-                    description={pdescription}
-                />
-                <PatientCard
-                    title={dtitle}
-                    imageSrc={dimageSrc}
-                    description={ddescription}
-                />
-
-                {/* Container for the image upload and dropdown */}
-                <div className={`flex flex-col bg-gray-300 items-start p-4 border border-gray-400 rounded-lg shadow-lg w-full max-w-md ${uploadedImage ? 'h-auto' : 'h-64'}`}>
-                    {/* Image upload section */}
-                    <label className="mb-2 font-bold text-gray-700">Upload Image:</label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="mb-4"
-                    />
-
-                    {/* Display uploaded image */}
-                    {uploadedImage && (
-                        <img
-                            src={uploadedImage}
-                            alt="Uploaded Preview"
-                            className="mb-4 border border-gray-300"
-                            style={{ maxWidth: '200px', maxHeight: '200px' }}
-                        />
+            <motion.div
+                className="flex items-center justify-end h-screen w-screen bg-cover bg-center pr-60"
+                initial={{ opacity: 0, x: 0 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 0 }}
+                transition={{ duration: 0.5 }}
+                style={{ backgroundImage: "url('/images/signup_background.jpg')" }}
+            >
+                <div
+                    className={`bg-white p-6 rounded-xl shadow-lg max-w-xs w-1/2 transform transition-opacity duration-300 ${transitionStage === "fadeIn" ? "opacity-100" : "opacity-0"
+                        }`}
+                >
+                    {step === 1 && (
+                        <>
+                            <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
+                                Enter Your Details
+                            </h2>
+                            <div className="mb-3">
+                                <label className="block text-gray-700 text-sm">Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="Enter your name"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="block text-gray-700 text-sm">Country</label>
+                                <input
+                                    type="text"
+                                    name="country"
+                                    value={formData.country}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="Enter your country"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="block text-gray-700 text-sm">Birthday</label>
+                                <input
+                                    type="date"
+                                    name="birthday"
+                                    value={formData.birthday}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 opacity-75"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="block text-gray-700 text-sm">Sex</label>
+                                <select
+                                    name="sex"
+                                    value={formData.sex}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 opacity-75"
+                                >
+                                    <option value="">Select</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div className="mb-5">
+                                <label className="block text-gray-700 text-sm">Description</label>
+                                <textarea
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    rows="3"
+                                    placeholder="Tell us about yourself"
+                                ></textarea>
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    onClick={handleNextStep}
+                                    className="px-6 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </>
                     )}
 
-                    {/* Dropdown for body part selection */}
-                    <label className="mb-2 font-bold text-gray-700">Select Body Part:</label>
-                    <select
-                        value={bodyPart}
-                        onChange={handleBodyPartChange}
-                        className="p-2 border border-gray-300 rounded mb-4"
-                    >
-                        <option value="">--Select--</option>
-                        <option value="upper extremity">Upper Extremity</option>
-                        <option value="lower extremity">Lower Extremity</option>
-                        <option value="torso">Torso</option>
-                        <option value="head/neck">Head/Neck</option>
-                        <option value="palms/soles">Palm/Soles</option>
-                        <option value="oral/genital">Oral/Genital</option>
-                    </select>
-
-                    {/* Submit button */}
-                    <div className="w-full flex justify-center">
-                        <button
-                            className="w-1/2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={handleSubmit}
-                        >
-                            Submit
-                        </button>
-                    </div>
+                    {step === 2 && (
+                        <>
+                            <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
+                                Create Account
+                            </h2>
+                            <div className="mb-3">
+                                <label className="block text-gray-700 text-sm">
+                                    Email Address
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="Enter your email"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="block text-gray-700 text-sm">Password</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="Enter your password"
+                                />
+                            </div>
+                            <div className="mb-5">
+                                <label className="block text-gray-700 text-sm">
+                                    Confirm Password
+                                </label>
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="Confirm your password"
+                                />
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <button
+                                    onClick={handlePreviousStep}
+                                    className="px-6 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
+                                >
+                                    Back
+                                </button>
+                                <button
+                                    onClick={handleSubmit}
+                                    className="px-3 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
+                                >
+                                    Sign Up
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
-}
+};
+
+export default Signup;
