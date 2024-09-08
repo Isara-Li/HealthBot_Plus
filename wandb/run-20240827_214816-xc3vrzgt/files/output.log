@@ -1,0 +1,30 @@
+[34m[1mwandb[39m[22m: [32m[41mERROR[39m[49m type model specified but this artifact is of type wandb-history
+Traceback (most recent call last):
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\normalize.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\public\api.py", line 1038, in artifact
+    raise ValueError(
+ValueError: type model specified but this artifact is of type wandb-history
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "c:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\app.py", line 76, in <module>
+    artifact = run.use_artifact('run-dwocxos2-history:v0', type='model')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\wandb_run.py", line 401, in wrapper_fn
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\wandb_run.py", line 391, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\wandb_run.py", line 3024, in use_artifact
+    artifact = public_api.artifact(type=type, name=name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\normalize.py", line 87, in wrapper
+    raise CommError(message, err).with_traceback(sys.exc_info()[2])
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\normalize.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Isara Liyanage\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\apis\public\api.py", line 1038, in artifact
+    raise ValueError(
+wandb.errors.CommError: type model specified but this artifact is of type wandb-history

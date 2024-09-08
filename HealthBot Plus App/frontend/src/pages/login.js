@@ -1,12 +1,24 @@
 import React from "react";
+import { motion } from "framer-motion";
+import Navbar from "../components/navbar"; 
 
 const Login = () => {
   return (
-    <div
+    <div>
+    <div className="App">
+        <Navbar />
+      </div>
+    <motion.div
       className="flex items-center justify-end h-screen w-screen bg-cover pr-60"
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
       style={{ backgroundImage: "url('/images/login_background.jpg')" }}
     >
+    
       <div className="bg-white p-6 rounded-xl shadow-lg max-w-xs w-1/2">
+      
         <h2 className="text-xl font-bold mb-6 text-center text-gray-800">
           Log In
         </h2>
@@ -30,6 +42,7 @@ const Login = () => {
           Log In
         </button>
       </div>
+    </motion.div>
     </div>
   );
 };

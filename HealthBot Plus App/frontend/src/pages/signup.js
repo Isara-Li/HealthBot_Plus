@@ -4,6 +4,8 @@ import {
   faArrowRightLong,
   faArrowLeftLong,
 } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
+import Navbar from "../components/navbar";
 
 const Signup = () => {
   const [step, setStep] = useState(1);
@@ -26,8 +28,16 @@ const Signup = () => {
   };
 
   return (
-    <div
+    <div>
+    <div className="App">
+        <Navbar />
+      </div>
+    <motion.div
       className="flex items-center justify-end h-screen w-screen bg-cover bg-center pr-60"
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
       style={{ backgroundImage: "url('/images/signup_background.jpg')" }}
     >
       <div
@@ -152,6 +162,7 @@ const Signup = () => {
           </>
         )}
       </div>
+    </motion.div>
     </div>
   );
 };
