@@ -6,13 +6,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import Navbar from "../components/navbar";
-import { useDispatch } from "react-redux";
+
 import { signInSuccess, signInFailure } from "../redux/user/userSlice";
 
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [transitionStage, setTransitionStage] = useState("fadeIn");
-  const dispatch = useDispatch();
 
   // State to store form data
   const [formData, setFormData] = useState({
@@ -70,11 +69,10 @@ const Signup = () => {
       });
 
       const result = await response.json();
+      console.log("Result fron page 2:", result);
       if (result.status === 'Ok') {
-        dispatch(signInSuccess(result.user));
         console.log("User signed up successfully:", result.user);
       } else {
-        dispatch(signInFailure(result.error));
       }
     } catch (error) {
       console.error("Error:", error);
