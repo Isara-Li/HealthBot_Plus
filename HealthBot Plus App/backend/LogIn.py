@@ -1,47 +1,55 @@
 from flask import jsonify, request, make_response
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta  # Import datetime and timedelta correctly
 import bcrypt
 import jwt  # Import JWT for token creation
 from bson import ObjectId
+import os  # To use environment variables
 
-SECRET_KEY = 'Isara'
+SECRET_KEY = 'Isara'  # Hardcoded secret (you might want to use environment variables instead)
 
 def LogIn(request, db):
-    user_input = request.json
     collection = db['user']
 
-    # Check if a user with the same email exists
-    existing_user = collection.find_one({"email": user_input['email']})
+    data = request.get_json()  # Extract email and password from request body
+    email = data.get('email')
+    password = data.get('password')
 
-    if existing_user is None:
-        return jsonify({"status": "error", "message": "No user found"}), 400
+    # Find the user by email in MongoDB
+    valid_user = collection.find_one({'email': email})
 
-    # Hash the password provided in the request and compare with the stored hash
-    password_plain = user_input['password'].encode('utf-8')
-    stored_hashed_password = existing_user['password']
+    if not valid_user:
+        return jsonify({'message': 'Email not found'}), 404
 
-    if not bcrypt.checkpw(password_plain, stored_hashed_password):
-        return jsonify({"status_login": "error", "message": "Invalid password"}), 401
+    # Verify password with bcrypt
+    valid_password = bcrypt.checkpw(password.encode('utf-8'), valid_user['password'])
 
-    # Convert ObjectId to string before returning the response
-    existing_user['_id'] = str(existing_user['_id'])
+    if not valid_password:
+        return jsonify({'message': 'Password or Username is incorrect'}), 401
 
-    # Generate a JWT token with the user's ID
-    token_data = {
-        "user_id": str(existing_user['_id']),
-        "exp": datetime.utcnow() + timedelta(hours=24)
-    }
-    
-    # Use PyJWT to encode the token
-    token = jwt.encode(token_data, SECRET_KEY, algorithm='HS256')
+    # Generate JWT token
+    token = jwt.encode(
+        {
+            'id': str(valid_user['_id']),  # MongoDB stores IDs as ObjectId, so we convert it to string
+            'exp': datetime.utcnow() + timedelta(hours=1)  # Correct usage of datetime and timedelta
+        },
+        SECRET_KEY,  # Use the secret key
+        algorithm="HS256"
+    )
 
-    response = make_response(jsonify({"status": "Ok", "message": "User successfully logged in"}))
-    response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='Strict')
-    
-    # Remove the password for security
-    del existing_user['password']  
+    # Remove the password from the user data before sending the response
+    user_data = {key: value for key, value in valid_user.items() if key != 'password'}
 
-    # Convert remaining ObjectIds to strings if needed before adding to cookie
-    response.set_cookie('user_data', jsonify(existing_user).data.decode('utf-8'), httponly=False, secure=True)
+    # Convert any ObjectId in the user_data to string
+    for key, value in user_data.items():
+        if isinstance(value, ObjectId):
+            user_data[key] = str(value)
+
+    # Create a response with the JWT token as an HTTP-only cookie
+    response = make_response(jsonify(user_data), 200)
+    response.set_cookie(
+        'access_token',
+        token,
+        expires=datetime.utcnow() + timedelta(hours=1)  # Correct usage of datetime and timedelta
+    )
 
     return response

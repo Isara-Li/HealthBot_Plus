@@ -20,22 +20,29 @@ const Login = () => {
     };
 
     try {
-      const result = await fetch("http://localhost:5000/login", {
+      const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(loginData)
       });
-      console.log("Result:", result.statusText);
-      if (result.statusText === 'OK') {
-        dispatch(signInSuccess(result.user));
-        console.log("User signed up successfully:", result.user);
+
+      // Parse the JSON response
+      const result = await response.json();
+
+      if (response.ok) {
+        // If the login is successful, dispatch the user data
+        dispatch(signInSuccess(result));
+        console.log("User signed in successfully:", result);
       } else {
-        dispatch(signInFailure(result.error));
+        dispatch(signInFailure(result.message));
+        console.log("Login failed:", result.message);
       }
     } catch (error) {
+
       console.error("Error:", error);
+      dispatch(signInFailure("An error occurred while logging in."));
     }
   };
 
