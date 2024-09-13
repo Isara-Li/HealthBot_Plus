@@ -25,6 +25,7 @@ import openai
 from chatbot import diagnose
 from pymongo import MongoClient
 from SignUp import SignUp
+from LogIn import LogIn
 
 
 app = Flask(__name__)
@@ -192,6 +193,10 @@ def handle_diagnosis():
 @app.route('/signup', methods=['POST'])
 def signup():
     return SignUp(request,db)
+
+@app.route('/login', methods=['POST'])
+def login():
+    return LogIn(request,db)
 
 
 if __name__ == '__main__':

@@ -44,17 +44,9 @@ def SignUp(request, db):
     if result.inserted_id is None:
         return jsonify({"status": "error", "message": "Failed to register user"}), 500
 
-    # Retrieve the newly inserted user document by its ID
-    new_user = collection.find_one({"_id": ObjectId(result.inserted_id)})
-
-    # Remove the password before returning the user information
-    if new_user:
-        new_user['_id'] = str(new_user['_id'])  # Convert ObjectId to string
-        del new_user['password']  # Remove the password field for security
 
     # Return success response with user details
     return jsonify({
         "status": "Ok",
-        "user": new_user,
         "message": "User successfully registered"
     }), 201
