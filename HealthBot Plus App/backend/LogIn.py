@@ -106,3 +106,44 @@ def Update(request, db):
 
     # Return the updated user details
     return jsonify(updated_user), 200
+
+
+def Google_Login(request, db):
+        data = request.get_json()
+        
+        collection = db['user']
+
+
+        email = data.get('email')
+
+        valid_user = collection.find_one({'email': email})
+
+        if not valid_user:
+            return jsonify({'message': 'Email not found'}), 404
+
+        token = jwt.encode(
+            {
+                'id': str(valid_user['_id']),
+                'exp': datetime.utcnow() + timedelta(hours=1)
+            },
+            SECRET_KEY,
+            algorithm="HS256"
+        )
+
+        user_data = {key: value for key, value in valid_user.items() if key != 'password'}
+
+        for key, value in user_data.items():
+            if isinstance(value, ObjectId):
+                user_data[key] = str(value)
+
+        response = make_response(jsonify(user_data), 200)
+        response.set_cookie(
+            'access_token',
+            token,
+            expires=datetime.utcnow() + timedelta(hours=1),
+            httponly=True,
+            samesite='None',
+            secure=True
+        )
+
+        return response

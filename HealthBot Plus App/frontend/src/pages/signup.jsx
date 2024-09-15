@@ -6,11 +6,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import Navbar from "../components/navbar";
+import { useNavigate } from "react-router-dom";
 
 
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [transitionStage, setTransitionStage] = useState("fadeIn");
+  const navigate = useNavigate();
 
 
   // State to store form data
@@ -71,6 +73,7 @@ const Signup = () => {
       const result = await response.json();
       if (result.status === 'Ok') {
         console.log("User signed up successfully:", result.user);
+        navigate("/");
       } else {
         console.log("Signup failed:", result.message);
       }

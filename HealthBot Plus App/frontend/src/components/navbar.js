@@ -35,7 +35,7 @@ function Navbar() {
     <div className="flex bg-white border border-slate-200 h-18 font-sans z-[999] relative">
       
       <div className="w-1/4 flex justify-center items-center">
-        <img src={"images/HealthBot+.PNG"} alt="Logo" className="h-5/6" />
+        <img src={"../images/HealthBot+.PNG"} alt="Logo" className="h-5/6" />
       </div>
       <div className="w-3/4 flex justify-center">
         <div className="w-4/5 h-full flex">

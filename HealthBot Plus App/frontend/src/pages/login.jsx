@@ -4,6 +4,7 @@ import Navbar from "../components/navbar";
 import { useDispatch } from "react-redux";
 import { signInSuccess, signInFailure } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth";
 
 const Login = () => {
   // State to store form input
@@ -93,12 +94,18 @@ const Login = () => {
                 required
               />
             </div>
-            <button
-              type="submit"
-              className="w-full py-2 px-4 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
-            >
-              Log In
-            </button>
+            <div className="flex flex-col space-y-4">
+              <button
+                type="submit"
+                className="w-full py-2 px-4 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform transform hover:scale-105"
+              >
+                Log In
+              </button>
+              <div className="w-full">
+                <OAuth />
+              </div>
+            </div>
+
           </form>
         </div>
       </motion.div>

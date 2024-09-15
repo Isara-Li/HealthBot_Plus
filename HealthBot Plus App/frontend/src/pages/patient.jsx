@@ -4,7 +4,7 @@ import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
 import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
 import { useSelector } from 'react-redux'
-import { signInSuccess, signInFailure } from "../redux/user/userSlice";
+import { signInSuccess, signInFailure, deleteUserSuccess } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 
 const Patient = () => {
@@ -74,6 +74,12 @@ const Patient = () => {
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
+  };
+
+
+  const handlelogout = () => {
+    dispatch(deleteUserSuccess());
+    navigate('/');
   };
 
   const handleSaveChanges = async () => {
@@ -159,12 +165,21 @@ const Patient = () => {
               <p className="text-lg text-gray-600">
                 Contact: {currentUser.email}
               </p>
-              <button
-                className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
-                onClick={handleEditToggle}
-              >
-                Edit Personal Data
-              </button>
+              <div className="flex space-x-6">
+                <button
+                  className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-60"
+                  onClick={handleEditToggle}
+                >
+                  Edit Personal Data
+                </button>
+                <button
+                  className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60"
+                  onClick={handlelogout}
+                >
+                  Logout
+                </button>
+              </div>
+
             </div>
           </div>
 
@@ -207,7 +222,7 @@ const Patient = () => {
                 placeholder="Contact"
               />
 
-              <div className="flex space-x-4 mt-4">
+              <div className="flex space-x-4 mt-4 items-center justify-center">
                 <button
                   className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-300"
                   onClick={handleSaveChanges}
@@ -221,6 +236,7 @@ const Patient = () => {
                   Cancel
                 </button>
               </div>
+
             </div>
           )}
         </div>
