@@ -50,3 +50,59 @@ def LogIn(request, db):
     )
 
     return response
+
+from flask import jsonify
+from bson import ObjectId
+
+from flask import jsonify
+from bson import ObjectId
+
+def Update(request, db):    
+    user_data = request.get_json()
+
+    # Extract user fields from the incoming data
+    user_id = user_data.get('id')
+    name = user_data.get('name')
+    age = user_data.get('age')
+    sex = user_data.get('sex')
+    contact = user_data.get('contact')
+
+    try:
+        # Convert the string id to ObjectId
+        filter_query = {'_id': ObjectId(user_id)}
+    except Exception as e:
+        return jsonify({"error": "Invalid ID format"}), 400
+
+    # Define the update data
+    update_data = {
+        '$set': {
+            'name': name,
+            'age': age,
+            'sex': sex,
+            'contact': contact
+        }
+    }
+
+    # Perform the update
+    result = db['user'].update_one(filter_query, update_data)
+  
+    if result.matched_count == 0:
+        return jsonify({"error": "User not found"}), 404
+
+    # Fetch the updated user
+    updated_user = db['user'].find_one(filter_query)
+
+    # Function to convert any non-serializable fields (e.g., ObjectId or bytes)
+    def make_serializable(document):
+        document['_id'] = str(document['_id'])  # Convert ObjectId to string
+        # Check for bytes fields and remove them if found
+        for key, value in document.items():
+            if isinstance(value, bytes):
+                document[key] = value.decode('utf-8', errors='ignore')  # You can also choose to remove or convert bytes
+        return document
+
+    # Convert any ObjectId or non-serializable fields
+    updated_user = make_serializable(updated_user)
+
+    # Return the updated user details
+    return jsonify(updated_user), 200

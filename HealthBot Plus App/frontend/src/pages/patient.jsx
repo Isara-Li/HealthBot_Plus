@@ -4,13 +4,16 @@ import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
 import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
 import { useSelector } from 'react-redux'
+import { signInSuccess, signInFailure } from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [reports, setReports] = useState([]);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentUser } = useSelector(state => state.user) // get the user from the redux store
+  const { currentUser } = useSelector(state => state.user); // get the user from the redux store
 
   useEffect(() => {
     fetchPatientData();
@@ -19,13 +22,11 @@ const Patient = () => {
 
   const fetchPatientData = async () => {
     const data = {
-      id: "P00001",
-      name: "Binura Fernando",
-      age: 45,
-      gender: "Male",
-      contact: "+94 774567143",
-      address: "No. 45, Temple Road,Kandy 20000,Sri Lanka",
-      profilePhoto: "https://via.placeholder.com/150",
+      id: currentUser._id,
+      name: currentUser.name,
+      age: currentUser.age,
+      gender: currentUser.sex,
+      contact: currentUser.email,
     };
     setPatientData(data);
   };
@@ -75,8 +76,39 @@ const Patient = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSaveChanges = () => {
-    setIsEditing(false);
+  const handleSaveChanges = async () => {
+    // Create a data object to send to the backend
+    const updatedData = {
+      id: currentUser._id,
+      name: patientData.name,
+      age: patientData.age,
+      sex: patientData.gender,
+      contact: patientData.contact,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/update', {
+        method: 'POST', // Use POST method to send data
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+        body: JSON.stringify(updatedData),
+
+      });
+
+      if (response.ok) {
+        // Data was successfully sent to the backend, stop editing mode
+        setIsEditing(false);
+        const result = await response.json();
+        console.log("Update successful:", result);
+        dispatch(signInSuccess(result));
+      } else {
+        console.error("Failed to update:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error occurred while updating:", error);
+    }
   };
 
   const handleReportClick = (reportId) => {
@@ -174,15 +206,7 @@ const Patient = () => {
                 }
                 placeholder="Contact"
               />
-              <input
-                type="text"
-                className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={patientData.address}
-                onChange={(e) =>
-                  setPatientData({ ...patientData, address: e.target.value })
-                }
-                placeholder="Address"
-              />
+
               <div className="flex space-x-4 mt-4">
                 <button
                   className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-300"
