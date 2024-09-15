@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
 import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
+import { useSelector } from 'react-redux'
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [reports, setReports] = useState([]);
   const navigate = useNavigate();
+  const { currentUser } = useSelector(state => state.user) // get the user from the redux store
 
   useEffect(() => {
     fetchPatientData();
@@ -94,7 +96,9 @@ const Patient = () => {
 
   return (
     <div className="App">
-      <Navbar /> {/* Include Navbar component */}
+      <div className="App">
+        <Navbar />
+      </div>
       <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen">
         <div className="flex justify-center space-x-6 mb-8">
           <StatCard title="Total Reports" value={totalReports} />
@@ -105,26 +109,23 @@ const Patient = () => {
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex justify-center">
           <div className="text-center">
             <img
-              src='https://static-files.cricket-australia.pulselive.com/headshots/440/7846-camedia.png'
+              src={currentUser.profile}
               alt="Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto"
             />
             <div className="mt-4">
               <h1 className="text-2xl font-semibold text-gray-800">
-                {patientData.name}
+                {currentUser.name}
               </h1>
               <p className="text-lg text-gray-600">
-                Patient ID: {patientData.id}
+                Patient ID: {currentUser._id}
               </p>
               <p className="text-lg text-gray-600">Age: {patientData.age}</p>
               <p className="text-lg text-gray-600">
-                Gender: {patientData.gender}
+                Gender: {currentUser.sex}
               </p>
               <p className="text-lg text-gray-600">
-                Contact: {patientData.contact}
-              </p>
-              <p className="text-lg text-gray-600">
-                Address: {patientData.address}
+                Contact: {currentUser.email}
               </p>
               <button
                 className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"

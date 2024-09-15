@@ -3,12 +3,14 @@ import { motion } from "framer-motion";
 import Navbar from "../components/navbar";
 import { useDispatch } from "react-redux";
 import { signInSuccess, signInFailure } from "../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   // State to store form input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Handler for form submission
   const handleSubmit = async (e) => {
@@ -35,6 +37,11 @@ const Login = () => {
         // If the login is successful, dispatch the user data
         dispatch(signInSuccess(result));
         console.log("User signed in successfully:", result);
+        if (result.is_patient) {
+          console.log("User is a patient");
+          navigate('/');
+        } else
+          navigate('/doctor');
       } else {
         dispatch(signInFailure(result.message));
         console.log("Login failed:", result.message);

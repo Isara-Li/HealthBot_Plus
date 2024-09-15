@@ -6,7 +6,7 @@ from bson import ObjectId  # Import to handle ObjectId
 def SignUp(request, db):
     # Get the user input
     user_input = request.json
-    collection = db['patient']
+    collection = db['user']
 
     # Check if a user with the same email already exists
     existing_user = collection.find_one({"email": user_input['email']})
@@ -33,7 +33,9 @@ def SignUp(request, db):
         "country": user_input['country'],
         "sex": user_input['sex'],
         "password": hashed_password,
-        "reports": []
+        "reports": [],
+        "is_patient": True,
+        "profile" : "https://img.freepik.com/premium-vector/happy-girl-avatar-funny-child-profile-picture-isolated-white-background_176411-3188.jpg?w=360"
     }
 
     # Insert the document into the collection
