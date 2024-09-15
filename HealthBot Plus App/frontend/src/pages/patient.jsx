@@ -120,7 +120,7 @@ const Patient = () => {
               <p className="text-lg text-gray-600">
                 Patient ID: {currentUser._id}
               </p>
-              <p className="text-lg text-gray-600">Age: {patientData.age}</p>
+              <p className="text-lg text-gray-600">Age: {currentUser.age}</p>
               <p className="text-lg text-gray-600">
                 Gender: {currentUser.sex}
               </p>
