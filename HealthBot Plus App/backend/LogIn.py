@@ -66,6 +66,7 @@ def Update(request, db):
     age = user_data.get('age')
     sex = user_data.get('sex')
     contact = user_data.get('contact')
+    profile = user_data.get('profile')
 
     try:
         # Convert the string id to ObjectId
@@ -79,7 +80,8 @@ def Update(request, db):
             'name': name,
             'age': age,
             'sex': sex,
-            'contact': contact
+            'contact': contact,
+            'profile': profile  
         }
     }
 

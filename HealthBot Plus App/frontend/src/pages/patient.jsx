@@ -6,6 +6,8 @@ import StatCard from "../components/statCard"; // Import the StatCard component
 import { useSelector } from 'react-redux'
 import { signInSuccess, signInFailure, deleteUserSuccess } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { app } from '../firebase'
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
@@ -13,6 +15,11 @@ const Patient = () => {
   const [reports, setReports] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [file, setFile] = useState(null);
+  const [fileUploadError, setFileUploadError] = useState(false);
+
+  const [progress, setProgress] = useState(0);
+
   const { currentUser } = useSelector(state => state.user); // get the user from the redux store
 
   useEffect(() => {
@@ -27,6 +34,7 @@ const Patient = () => {
       age: currentUser.age,
       gender: currentUser.sex,
       contact: currentUser.email,
+      profile: currentUser.profile
     };
     setPatientData(data);
   };
@@ -83,37 +91,63 @@ const Patient = () => {
   };
 
   const handleSaveChanges = async () => {
-    // Create a data object to send to the backend
+    let downloadURL = patientData.profile;
+
+    if (file) {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      setFileUploadError(false);
+
+      await new Promise((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(Math.round(progress));
+          },
+          (error) => {
+            setFileUploadError(true);
+            reject(error);
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+              downloadURL = url; // Store the download URL
+              resolve();
+            });
+          }
+        );
+      });
+    }
+
     const updatedData = {
       id: currentUser._id,
       name: patientData.name,
       age: patientData.age,
       sex: patientData.gender,
       contact: patientData.contact,
+      profile: downloadURL,
     };
-
+    console.log(updatedData);
     try {
       const response = await fetch('http://localhost:5000/update', {
-        method: 'POST', // Use POST method to send data
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-
         body: JSON.stringify(updatedData),
-
       });
 
       if (response.ok) {
-        // Data was successfully sent to the backend, stop editing mode
         setIsEditing(false);
         const result = await response.json();
-        console.log("Update successful:", result);
-        dispatch(signInSuccess(result));
+        dispatch(signInSuccess(result)); // Update user in Redux store
       } else {
-        console.error("Failed to update:", response.statusText);
+        console.error('Failed to update:', response.statusText);
       }
     } catch (error) {
-      console.error("Error occurred while updating:", error);
+      console.error('Error occurred while updating:', error);
     }
   };
 
@@ -149,7 +183,16 @@ const Patient = () => {
             <img
               src={currentUser.profile}
               alt="Profile"
-              className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto"
+              className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
+              onClick={() => document.getElementById('fileInput').click()} // Trigger file input on image click
+            />
+
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => setFile(e.target.files[0])}
             />
             <div className="mt-4">
               <h1 className="text-2xl font-semibold text-gray-800">
