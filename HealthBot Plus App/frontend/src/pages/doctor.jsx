@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
 import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
+import { useSelector } from 'react-redux'
+import { useDispatch } from "react-redux";
+
+import { deleteUserSuccess } from "../redux/user/userSlice";
+
 
 const Doctor = ({ productLogo }) => {
   const [doctorData, setDoctorData] = useState(null);
@@ -11,6 +16,10 @@ const Doctor = ({ productLogo }) => {
   const [correctPredictions, setCorrectPredictions] = useState(0);
   const [faultPredictions, setFaultPredictions] = useState(0);
   const navigate = useNavigate();
+  const { currentUser } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+
 
   useEffect(() => {
     fetchDoctorData();
@@ -19,13 +28,11 @@ const Doctor = ({ productLogo }) => {
 
   const fetchDoctorData = async () => {
     const data = {
-      id: "D00001",
-      name: "Dr. CHANDANA WIJEKOON",
-      specialization: "Dermatology",
-      contact: "+94 703454768",
-      email: "chandana123@hospital.com",
-      address: "No. 123, Galle Road,Colombo 03,Sri Lanka.",
-      profilePhoto: "https://via.placeholder.com/150",
+      id: currentUser._id,
+      name: currentUser.name,
+      email: currentUser.email,
+      age: currentUser.age,
+      country: currentUser.country,
     };
     setDoctorData(data);
   };
@@ -86,6 +93,11 @@ const Doctor = ({ productLogo }) => {
 
   const handleSaveChanges = () => {
     setIsEditing(false);
+  };
+
+  const handlelogout = () => {
+    dispatch(deleteUserSuccess());
+    navigate('/');
   };
 
   const handleReportClick = (reportId) => {
@@ -162,7 +174,7 @@ const Doctor = ({ productLogo }) => {
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
           <div className="text-center">
             <img
-              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRripLcqGUKIBfgbtmux6U1UY9UkgezqzJzFw&s'
+              src={currentUser.profile}
               alt="Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto"
             />
@@ -173,21 +185,16 @@ const Doctor = ({ productLogo }) => {
               <p className="text-lg text-gray-600">
                 Doctor ID: {doctorData.id}
               </p>
-              <p className="text-lg text-gray-600">
-                Specialization: {doctorData.specialization}
-              </p>
-              <p className="text-lg text-gray-600">
-                Contact: {doctorData.contact}
-              </p>
+
               <p className="text-lg text-gray-600">Email: {doctorData.email}</p>
-              <p className="text-lg text-gray-600">
-                Address: {doctorData.address}
-              </p>
+              <p className="text-lg text-gray-600">Age: {doctorData.age}</p>
+              <p className="text-lg text-gray-600">Country: {doctorData.country}</p>
+
               <button
-                className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
-                onClick={handleEditToggle}
+                className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60"
+                onClick={handlelogout}
               >
-                Edit Personal Data
+                Logout
               </button>
             </div>
           </div>

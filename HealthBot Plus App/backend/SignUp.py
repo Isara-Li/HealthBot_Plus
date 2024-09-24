@@ -26,7 +26,7 @@ def SignUp(request, db):
     hashed_password = bcrypt.hashpw(password_plain, bcrypt.gensalt())  # Hash the password
 
     # Prepare the data to be inserted
-    patient_data = {
+    patient_data =  {
         "name": user_input['name'],
         "email": user_input['email'],
         "age": age,

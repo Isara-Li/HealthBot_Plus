@@ -42,7 +42,7 @@ const Login = () => {
           console.log("User is a patient");
           navigate('/');
         } else
-          navigate('/doctor');
+          navigate(`/doctor/${result._id}`);
       } else {
         dispatch(signInFailure(result.message));
         console.log("Login failed:", result.message);
