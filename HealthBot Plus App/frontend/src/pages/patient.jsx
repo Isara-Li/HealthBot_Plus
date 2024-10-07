@@ -105,7 +105,7 @@ const Patient = () => {
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex justify-center">
           <div className="text-center">
             <img
-              src={patientData.profilePhoto}
+              src='https://static-files.cricket-australia.pulselive.com/headshots/440/7846-camedia.png'
               alt="Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto"
             />

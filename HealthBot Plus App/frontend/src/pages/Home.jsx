@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Navbar from "../components/navbar";
 import { FaRocketchat } from "react-icons/fa";
 import { motion } from "framer-motion";
+import AudioRecorder from "../components/AudioRecorder";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Counter = ({ end }) => {
   const [count, setCount] = useState(0);
@@ -58,6 +61,27 @@ const Counter = ({ end }) => {
 };
 
 const SkinVisionPage = () => {
+  const [chatClicked, setChatClicked] = useState(false);
+  const [showRecorder, setShowRecorder] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    let timer;
+    if (chatClicked) {
+      timer = setTimeout(() => {
+        setShowRecorder(true);
+      }, 200);
+    } else {
+      setShowRecorder(false);
+    }
+
+    return () => clearTimeout(timer); // Cleanup timer if chatClicked changes before the timer completes
+  }, [chatClicked]);
+
+  const handleTrySkinVisionClick = () => {
+    navigate("/diagnose"); // Navigate to the /diagnose page
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 0 }}
@@ -83,7 +107,10 @@ const SkinVisionPage = () => {
             <h1 className="text-6xl font-bold my-4 space-x-4">
               Are your moles getting under your skin?
             </h1>
-            <button className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4">
+            <button
+              onClick={handleTrySkinVisionClick} // Handle the button click
+              className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
+            >
               Try SkinVision
             </button>
           </div>
@@ -133,10 +160,32 @@ const SkinVisionPage = () => {
           </div>
         </div>
       </section>
-      <button className="fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl p-2 flex items-center hover:bg-blue-700">
-        <FaRocketchat size={14} style={{ color: "white" }} />
-        <div className="w-2"></div> want to chat?
-      </button>
+
+      <div
+        onClick={() => setChatClicked(true)}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
+      >
+        {chatClicked ? (
+          <div className="flex flex-col items-start justify-center">
+            <IoCloseCircleOutline
+              size={25}
+              style={{ padding: "1px", color: "white" }}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the event from bubbling up to the parent div
+                setChatClicked(false);
+              }}
+            />
+            {showRecorder && <AudioRecorder />}
+          </div>
+        ) : (
+          <>
+            <FaRocketchat size={20} style={{ color: "white" }} />
+            <div className="w-2"></div>
+            <p>want to chat?</p>
+          </>
+        )}
+      </div>
     </motion.div>
   );
 };

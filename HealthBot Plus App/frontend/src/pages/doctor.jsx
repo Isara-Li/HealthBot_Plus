@@ -50,7 +50,7 @@ const Doctor = ({ productLogo }) => {
       },
       {
         id: 3,
-        patientName: "Somasiri Medagedara",
+        patientName: "Kusal Mendis",
         date: "2023-06-10",
         investigation: "Benign Keratosis",
         status: "Reviewed",
@@ -97,10 +97,10 @@ const Doctor = ({ productLogo }) => {
       prevReports.map((report) =>
         report.id === reportId
           ? {
-              ...report,
-              modelPrediction:
-                report.modelPrediction === "Correct" ? "Fault" : "Correct",
-            }
+            ...report,
+            modelPrediction:
+              report.modelPrediction === "Correct" ? "Fault" : "Correct",
+          }
           : report
       )
     );
@@ -108,10 +108,10 @@ const Doctor = ({ productLogo }) => {
       reports.map((report) =>
         report.id === reportId
           ? {
-              ...report,
-              modelPrediction:
-                report.modelPrediction === "Correct" ? "Fault" : "Correct",
-            }
+            ...report,
+            modelPrediction:
+              report.modelPrediction === "Correct" ? "Fault" : "Correct",
+          }
           : report
       )
     );
@@ -162,7 +162,7 @@ const Doctor = ({ productLogo }) => {
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
           <div className="text-center">
             <img
-              src={doctorData.profilePhoto}
+              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRripLcqGUKIBfgbtmux6U1UY9UkgezqzJzFw&s'
               alt="Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto"
             />
@@ -329,15 +329,13 @@ const Doctor = ({ productLogo }) => {
                       </button>
                     )}
                     <button
-                      className={`doctor-set-button ${
-                        report.modelPrediction === "Correct"
-                          ? "bg-purple-500"
-                          : "bg-red-500"
-                      } text-white py-1 px-4 rounded-md hover:${
-                        report.modelPrediction === "Correct"
+                      className={`doctor-set-button ${report.modelPrediction === "Correct"
+                        ? "bg-purple-500"
+                        : "bg-red-500"
+                        } text-white py-1 px-4 rounded-md hover:${report.modelPrediction === "Correct"
                           ? "bg-purple-600"
                           : "bg-red-600"
-                      } transition duration-300`}
+                        } transition duration-300`}
                       onClick={() => handleTogglePrediction(report.id)}
                     >
                       {report.modelPrediction === "Correct"
