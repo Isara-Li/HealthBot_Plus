@@ -1,23 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navbar";
 import PatientCard from "../components/patient_card";
+import { useDispatch } from "react-redux";
+import { useSelector } from 'react-redux';
 
 export default function Diagnose() {
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector(state => state.user);
+
     // Store the parameters in variables
-    const ptitle = "Isara Liyanage";
-    const pimageSrc = "https://cdn.vectorstock.com/i/500p/96/75/gray-scale-male-character-profile-picture-vector-51589675.jpg";
+    const ptitle = currentUser.name;
+    const pimageSrc = currentUser.profile;
     const pdescription = [
-        "ID - 12345",
-        "Gender - Male",
-        "Age - 22",
+        `ID - ${currentUser._id}`,
+        `Gender - ${currentUser.sex}`,
+        `Age - ${currentUser.age}`,
     ];
-    const dtitle = "Dr. Fernando";
-    const dimageSrc = "https://cdn-icons-png.flaticon.com/512/3774/3774299.png";
-    const ddescription = [
+
+    const [dtitle, setDtitle] = useState("Dr. Fernando"); // State to store doctor details
+    const [dimageSrc, setDimageSrc] = useState("https://cdn-icons-png.flaticon.com/512/3774/3774299.png");
+    const [ddescription, setDdescription] = useState([
         "ID - 12345",
         "Gender - Male",
         "Email - liyanageisara@gmail.com",
-    ];
+    ]);
+    const [loading, setLoading] = useState(true); // State to track loading status
 
     // Dictionary to encode body part
     const bodyPartEncoding = {
@@ -33,8 +40,44 @@ export default function Diagnose() {
     // State to store uploaded image and selected body part
     const [uploadedImage, setUploadedImage] = useState(null);
     const [bodyPart, setBodyPart] = useState("");
-    const pgender = "mlae";
+    const pgender = "male";  // Assuming typo correction
     const page = 75.0;
+
+    // Fetch doctor details when component mounts
+    useEffect(() => {
+        const fetchDoctorDetails = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/getdoctor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ doctor_id: currentUser.doctor_id }),
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    // Update doctor details
+                    setDtitle(data.name || 'Doctor');
+                    setDimageSrc(data.image || dimageSrc); // Assuming API provides doctor image
+                    setDdescription([
+                        `ID - ${data.id}`,
+                        `Gender - ${data.sex}`,
+                        `Email - ${data.email}`,
+                    ]);
+                    console.log('Doctor data:', data); // Log the fetched doctor data
+                }
+            } catch (error) {
+                console.error('Error fetching doctor details:', error);
+            } finally {
+                setLoading(false); // Data has been fetched, stop loading
+            }
+        };
+
+        fetchDoctorDetails();
+    }, [currentUser.doctor_id]); // Dependency array includes currentUser.doctor_id to trigger useEffect when it changes
 
     // Handle image upload
     const handleImageUpload = (e) => {
@@ -92,6 +135,11 @@ export default function Diagnose() {
             alert('An error occurred while making the prediction.');
         }
     };
+
+    // Render the content
+    if (loading) {
+        return <div>Loading...</div>;  // Display "Loading..." while the data is being fetched
+    }
 
     return (
         <div>

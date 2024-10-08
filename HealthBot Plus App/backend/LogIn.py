@@ -149,3 +149,34 @@ def Google_Login(request, db):
         )
 
         return response
+
+def get_Doctor(request, db):
+    try:
+        # Get the request data
+        data = request.get_json()
+        print(data)
+        doctor_id = data.get('doctor_id')
+        doctor_id = ObjectId(doctor_id)
+        collection = db['user']
+        
+        if not doctor_id:
+            return jsonify({"error": "No doctorId provided"}), 400
+
+        # Query the MongoDB database for the doctor using doctorId
+        doctor = collection.find_one({"_id": doctor_id})
+        
+        if not doctor:
+            return jsonify({"error": "Doctor not found"}), 404
+
+        # Create a response with doctor details
+        doctor_data = {
+            "id": str(doctor["_id"]),
+            "name": doctor.get("name", "Unknown"),
+            "sex": doctor.get("sex", "Unknown"),
+            "email": doctor.get("email", "Unknown"),
+            "image": doctor.get("profile", "https://cdn-icons-png.flaticon.com/512/3774/3774299.png")  # Default image if not provided
+        }
+        return jsonify(doctor_data), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

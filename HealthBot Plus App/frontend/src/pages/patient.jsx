@@ -154,6 +154,8 @@ const Patient = () => {
   const handleReportClick = (reportId) => {
     navigate(`/report/${reportId}`);
   };
+  console.log(currentUser.doctor_id);
+
 
   const totalReports = reports.length;
   const reviewedReports = reports.filter(
@@ -180,12 +182,21 @@ const Patient = () => {
 
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex justify-center">
           <div className="text-center">
-            <img
-              src={currentUser.profile}
-              alt="Profile"
-              className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
-              onClick={() => document.getElementById('fileInput').click()} // Trigger file input on image click
-            />
+            {isEditing ? (
+              <img
+                src={currentUser.profile}
+                alt="Profile"
+                className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
+                onClick={() => document.getElementById('fileInput').click()} // Trigger file input on image click
+              />
+            ) : (
+              <img
+                src={currentUser.profile}
+                alt="Profile"
+                className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
+              />
+            )}
+
 
             <input
               id="fileInput"
@@ -209,12 +220,20 @@ const Patient = () => {
                 Contact: {currentUser.email}
               </p>
               <div className="flex space-x-6">
-                <button
-                  className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-60"
-                  onClick={handleEditToggle}
-                >
-                  Edit Personal Data
-                </button>
+                {isEditing ? (
+                  <button
+                    className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-60"
+                    onClick={handleEditToggle}
+                  >
+                    Back
+                  </button>) : (
+                  <button
+                    className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-60"
+                    onClick={handleEditToggle}
+                  >
+                    Edit Personal Data
+                  </button>)}
+
                 <button
                   className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60"
                   onClick={handlelogout}
@@ -272,12 +291,7 @@ const Patient = () => {
                 >
                   Save Changes
                 </button>
-                <button
-                  className="bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 transition duration-300"
-                  onClick={handleEditToggle}
-                >
-                  Cancel
-                </button>
+
               </div>
 
             </div>

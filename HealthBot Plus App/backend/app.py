@@ -25,7 +25,7 @@ import openai
 from chatbot import diagnose
 from pymongo import MongoClient
 from SignUp import SignUp
-from LogIn import LogIn,Update,Google_Login
+from LogIn import LogIn,Update,Google_Login,get_Doctor
 
 
 app = Flask(__name__)
@@ -205,5 +205,12 @@ def update():
 @app.route('/googlelogin', methods=['POST'])
 def google_login():
     return Google_Login(request,db)
+
+@app.route('/getdoctor', methods=['POST'])
+def get_doctor():
+    return get_Doctor(request,db)
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
