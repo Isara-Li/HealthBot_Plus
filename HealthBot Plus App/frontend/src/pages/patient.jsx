@@ -17,6 +17,7 @@ const Patient = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [progress, setProgress] = useState(0);
 
@@ -101,6 +102,7 @@ const Patient = () => {
       setFileUploadError(false);
 
       await new Promise((resolve, reject) => {
+        setIsUploading(true);
         uploadTask.on(
           'state_changed',
           (snapshot) => {
@@ -110,10 +112,12 @@ const Patient = () => {
           (error) => {
             setFileUploadError(true);
             reject(error);
+            setIsUploading(false);
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((url) => {
               downloadURL = url; // Store the download URL
+              setIsUploading(false);
               resolve();
             });
           }
@@ -182,7 +186,9 @@ const Patient = () => {
 
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex justify-center">
           <div className="text-center">
+            {isUploading && <div className='text-green-500 my-1'>Uploading image...</div>}
             {isEditing ? (
+
               <img
                 src={currentUser.profile}
                 alt="Profile"
@@ -205,6 +211,7 @@ const Patient = () => {
               style={{ display: 'none' }}
               onChange={(e) => setFile(e.target.files[0])}
             />
+
             <div className="mt-4">
               <h1 className="text-2xl font-semibold text-gray-800">
                 {currentUser.name}

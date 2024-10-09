@@ -26,6 +26,15 @@ from chatbot import diagnose
 from pymongo import MongoClient
 from SignUp import SignUp
 from LogIn import LogIn,Update,Google_Login,get_Doctor
+from gradio_client import Client, handle_file
+import firebase_admin
+from firebase_admin import credentials
+from flask import Flask, send_file, jsonify
+import firebase_admin
+from firebase_admin import credentials, storage
+from io import BytesIO
+import urllib.parse
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -35,22 +44,14 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 mongo_uri = 'mongodb+srv://isara:isara@healthbot.p5i8q.mongodb.net/healthbot?retryWrites=true&w=majority&appName=healthbot'
 client = MongoClient(mongo_uri)
 
+
+cred = credentials.Certificate(r"C:\Users\Isara Liyanage\Desktop\healthbotplus-firebase-adminsdk-ysm0p-be95ee6fe0.json")
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'healthbotplus.appspot.com'  # Your Firebase storage bucket URL
+})
+
 db = client['healthbot'] 
 
-# Load the pre-trained model
-#melanoma_model = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin.h5')
-
-#model_checkpoint = "microsoft/swin-tiny-patch4-window7-224"
-#feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
-
-#model_layer = TFSMLayer(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\skin_model', call_endpoint='serving_default')
-
-#model_xai = load_model(r'C:\Users\Isara Liyanage\Documents\GitHub\HealthBot_Plus\HealthBot Plus App\backend\model\model_xai.h5')
-
-#disease_model = tf.keras.Sequential([
-#    model_layer
-#])
-disease_model=melanoma_model =model_xai=None;
 lesion_type_dict = {
     0: 'Melanocytic-nevi',
     1: 'Melanoma',
@@ -61,130 +62,47 @@ lesion_type_dict = {
     6: 'Dermatofibroma'
 }
 
-def preprocess_image_for_melanoma(image):
-    #image = tf.image.decode_jpeg(image, channels=3)
-    image = tf.image.resize(image, (128, 128))
-    image = image / 255.0  # Normalizing the image
-    return image
+def upload_to_firebase(local_file_path, filename):
+    bucket = storage.bucket()
+    blob = bucket.blob(filename)
+    blob.upload_from_filename(local_file_path)
+    blob.make_public()
+    return blob.public_url
 
 # Endpoint for prediction
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json
-    
+    data = request.json       
+    sex = int(data['sex']) 
+    age_approx = int(data['age_approx'])
+    anatom_site_general_challenge = int(data['anatom_site_general_challenge'])
+    image = data['image_url']
 
     
-    sex = data['sex']
- 
-    age_approx = float(data['age_approx'])
-    anatom_site_general_challenge = data['anatom_site_general_challenge']
-    print("Isara Liyanage",anatom_site_general_challenge)
-    anatom_site_general_challenge = 0
-
-    
-    try:
-        b64str = data['image']
-        encoded_data = b64str.split(',')[1]
-        nparr = np.frombuffer(base64.b64decode(encoded_data), np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    except tf.errors.InvalidArgumentError:
-        return jsonify({'error': 'Invalid base64 string'}), 400
-    
-
-    processed_image = preprocess_image_for_melanoma(image)
-    
-    patient_data = [sex, age_approx, anatom_site_general_challenge]
-    patient_data = np.array(patient_data).reshape((1, -1))  # Adjust the shape as per model requirement
-    
-    processed_image = tf.expand_dims(processed_image, axis=0)
-    
-    # Perform the prediction
-    prediction = melanoma_model.predict([processed_image, patient_data])
-    
-    # Convert prediction to a human-readable format
-    prediction_class = np.argmax(prediction, axis=-1)[0]
-
-    if prediction_class == 0:
-        # Benign
-        disease_prediction = predict_disease(image, disease_model, feature_extractor)
-        disease_prediction = int(disease_prediction)
-        disease_prediction = lesion_type_dict[disease_prediction]
-        get_xai(image)
-        return jsonify({
-            'prediction': 'Benign', 
-            'disease_prediction': disease_prediction
-        })
-    
-    # Return the prediction
-    get_xai(image)
-    return jsonify({'prediction': 'Malignant'})
-
-
-
-def preprocess_image(image, feature_extractor):
-
-    # Preprocess the image using the feature extractor
-    inputs = feature_extractor(images=image, return_tensors="tf")
-    return inputs['pixel_values']
-
-def predict_disease(image, model, feature_extractor):
-    pixel_values = preprocess_image(image, feature_extractor)
-    outputs = model(pixel_values)
-    
-    print("Isara",outputs)
-    if isinstance(outputs, dict):
-        logits = outputs['logits']
-    else:
-        logits = outputs
-
-    # Get the predicted class label
-    predicted_label = tf.argmax(logits, axis=-1).numpy()[0]
-
-    return predicted_label
-
-
-
-def load_and_preprocess_image_xai(image, target_size=(224, 224, 3)):
-    img = cv2.resize(image, (224, 224))
-    img_array = img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
-    img_array = img_array / 255.0 
-    return img_array
-
-
-def get_xai(image,save_dir='./static/xai_images/'):
-    os.makedirs(save_dir, exist_ok=True)
-    X_sample = load_and_preprocess_image_xai(image)
-
-    # Initialize LIME explainer
-    explainer = lime_image.LimeImageExplainer()
-
-    # Explain the image
-    explanation = explainer.explain_instance(
-        X_sample[0].astype('double'),  
-        model_xai.predict,            
-        top_labels=2,                  
-        hide_color=0,                 
-        num_samples=1000              
+    client = Client("Yasiru2002/Melanoma_Model")
+    result = client.predict(
+            image=handle_file(image),
+            sex=sex,
+            age_approx=age_approx,
+            anatom_site_general_challenge= anatom_site_general_challenge,
+            api_name="/predict"
     )
 
-    # Visualize the explanation
-    temp, mask = explanation.get_image_and_mask(
-        explanation.top_labels[0],    
-        positive_only=True,           
-        num_features=5,                
-        hide_rest=True                 
-    )
 
-    plt.imshow(mark_boundaries(temp / 2 + 0.5, mask)) 
+    image_path_1 = result[1]
+    image_path_2 = result[2]
 
+    # Upload images to Firebase and get the URLs
+    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+    firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
+    firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
 
-    image_path = os.path.join(save_dir, 'xai_image.png')
+    # Print Firebase URLs in the console
+    print("Image 1 URL:", firebase_url_1)
+    print("Image 2 URL:", firebase_url_2)
+    
 
-    plt.savefig(image_path)
-    plt.close()
-
-    return None
+    return jsonify({'result': 'Melanoma', 'probability': 0.9})
 
 @app.route('/chatbot', methods=['POST'])
 def handle_diagnosis():

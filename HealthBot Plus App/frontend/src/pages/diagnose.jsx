@@ -3,6 +3,9 @@ import Navbar from "../components/navbar";
 import PatientCard from "../components/patient_card";
 import { useDispatch } from "react-redux";
 import { useSelector } from 'react-redux';
+import { app } from '../firebase'
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 
 export default function Diagnose() {
     const dispatch = useDispatch();
@@ -28,20 +31,20 @@ export default function Diagnose() {
 
     // Dictionary to encode body part
     const bodyPartEncoding = {
-        'head/neck': 0,
+        'torso': 0,
         'lower extremity': 1,
-        'oral/genital': 2,
-        'palms/soles': 3,
-        'torso': 4,
-        'unknown': 5,
-        'upper extremity': 6
+        'upper extremity': 2,
+        'head/neck': 3,
+        'palms/soles': 4,
+        'oral/genital': 5
     };
 
     // State to store uploaded image and selected body part
     const [uploadedImage, setUploadedImage] = useState(null);
     const [bodyPart, setBodyPart] = useState("");
-    const pgender = "male";  // Assuming typo correction
-    const page = 75.0;
+    const [isUploading, setIsUploading] = useState(false);
+    const pgender = currentUser.sex;
+    const page = currentUser.age;
 
     // Fetch doctor details when component mounts
     useEffect(() => {
@@ -61,33 +64,54 @@ export default function Diagnose() {
                 } else {
                     // Update doctor details
                     setDtitle(data.name || 'Doctor');
-                    setDimageSrc(data.image || dimageSrc); // Assuming API provides doctor image
+                    setDimageSrc(data.image || dimageSrc);
                     setDdescription([
                         `ID - ${data.id}`,
                         `Gender - ${data.sex}`,
                         `Email - ${data.email}`,
                     ]);
-                    console.log('Doctor data:', data); // Log the fetched doctor data
+                    console.log('Doctor data:', data);
                 }
             } catch (error) {
                 console.error('Error fetching doctor details:', error);
             } finally {
-                setLoading(false); // Data has been fetched, stop loading
+                setLoading(false);
             }
         };
 
         fetchDoctorDetails();
-    }, [currentUser.doctor_id]); // Dependency array includes currentUser.doctor_id to trigger useEffect when it changes
+    }, [currentUser.doctor_id]);
 
-    // Handle image upload
+    // Handle image upload and store it in Firebase
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setUploadedImage(reader.result);
-            };
-            reader.readAsDataURL(file); // This will convert the image to base64 format
+            setIsUploading(true);
+            const storage = getStorage(app);
+            const storageRef = ref(storage, `${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    // Observe progress of the upload
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                },
+                (error) => {
+                    // Handle unsuccessful uploads
+                    console.error('Upload failed:', error);
+                    setIsUploading(false);
+                },
+                () => {
+                    // Handle successful uploads
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        setIsUploading(false); // Finish uploading
+                        setUploadedImage(downloadURL); // Set the download URL to display the image
+                    });
+                }
+            );
         }
     };
 
@@ -103,15 +127,14 @@ export default function Diagnose() {
             return;
         }
 
-        // Encode the selected body part
         const encodedBodyPart = bodyPartEncoding[bodyPart] || bodyPartEncoding['unknown'];
 
-        // Prepare the payload
         const payload = {
             image: uploadedImage,
-            sex: pgender === 'male' ? 1 : 0,
+            sex: pgender === 'male' ? 0 : 1,
             age_approx: page,
-            anatom_site_general_challenge: encodedBodyPart
+            anatom_site_general_challenge: encodedBodyPart,
+            image_url: uploadedImage
         };
 
         try {
@@ -128,7 +151,6 @@ export default function Diagnose() {
                 alert(`Error: ${data.error}`);
             } else {
                 console.log(data);
-                /*alert(`Prediction: ${data.prediction}`);*/
             }
         } catch (error) {
             console.error('Error:', error);
@@ -136,9 +158,8 @@ export default function Diagnose() {
         }
     };
 
-    // Render the content
     if (loading) {
-        return <div>Loading...</div>;  // Display "Loading..." while the data is being fetched
+        return <div>Loading...</div>;
     }
 
     return (
@@ -162,7 +183,6 @@ export default function Diagnose() {
 
                 {/* Container for the image upload and dropdown */}
                 <div className={`flex flex-col bg-gray-300 items-start p-4 border border-gray-400 rounded-lg shadow-lg w-full max-w-md ${uploadedImage ? 'h-auto' : 'h-64'}`}>
-                    {/* Image upload section */}
                     <label className="mb-2 font-bold text-gray-700">Upload Image:</label>
                     <input
                         type="file"
@@ -170,8 +190,10 @@ export default function Diagnose() {
                         onChange={handleImageUpload}
                         className="mb-4"
                     />
+                    {isUploading && <div className='text-green-500'>Uploading image...</div>}
 
-                    {/* Display uploaded image */}
+
+
                     {uploadedImage && (
                         <img
                             src={uploadedImage}
@@ -181,7 +203,6 @@ export default function Diagnose() {
                         />
                     )}
 
-                    {/* Dropdown for body part selection */}
                     <label className="mb-2 font-bold text-gray-700">Select Body Part:</label>
                     <select
                         value={bodyPart}
@@ -197,7 +218,6 @@ export default function Diagnose() {
                         <option value="oral/genital">Oral/Genital</option>
                     </select>
 
-                    {/* Submit button */}
                     <div className="w-full flex justify-center">
                         <button
                             className="w-1/2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
