@@ -35,7 +35,9 @@ def SignUp(request, db):
         "password": hashed_password,
         "reports": [],
         "is_patient": True,
-        "profile" : "https://img.freepik.com/premium-vector/happy-girl-avatar-funny-child-profile-picture-isolated-white-background_176411-3188.jpg?w=360"
+        "profile" : "https://img.freepik.com/premium-vector/happy-girl-avatar-funny-child-profile-picture-isolated-white-background_176411-3188.jpg?w=360",
+        'doctor_id':"66f3222d5b442fa2571a6bd7"
+
     }
 
     # Insert the document into the collection

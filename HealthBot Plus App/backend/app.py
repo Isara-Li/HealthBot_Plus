@@ -1,27 +1,6 @@
 from flask import Flask, request, jsonify
-from tensorflow.keras.models import load_model
-from flask_cors import CORS
-import tensorflow as tf
-import numpy as np
-import base64
-import cv2
-from transformers import AutoModel, AutoProcessor, AutoTokenizer
-from PIL import Image
-from transformers import SwinForImageClassification, AutoConfig, AutoProcessor
-from keras.layers import TFSMLayer
-from transformers import AutoFeatureExtractor
-from tensorflow.keras.preprocessing import image
-from lime import lime_image
-from skimage.segmentation import mark_boundaries
-from tensorflow.keras.preprocessing.image import img_to_array
-import matplotlib.pyplot as plt
-import os
-from flask import Flask, request, jsonify
-import requests
-import json
 from flask_cors import CORS
 from dotenv import load_dotenv
-import openai
 from chatbot import diagnose
 from pymongo import MongoClient
 from SignUp import SignUp
@@ -35,6 +14,7 @@ from firebase_admin import credentials, storage
 from io import BytesIO
 import urllib.parse
 from datetime import datetime
+from Report import get_Report,update_report_status,get_unique_report
 
 
 app = Flask(__name__)
@@ -47,20 +27,11 @@ client = MongoClient(mongo_uri)
 
 cred = credentials.Certificate(r"C:\Users\Isara Liyanage\Desktop\healthbotplus-firebase-adminsdk-ysm0p-be95ee6fe0.json")
 firebase_admin.initialize_app(cred, {
-    'storageBucket': 'healthbotplus.appspot.com'  # Your Firebase storage bucket URL
+    'storageBucket': 'healthbotplus.appspot.com' 
 })
 
 db = client['healthbot'] 
 
-lesion_type_dict = {
-    0: 'Melanocytic-nevi',
-    1: 'Melanoma',
-    2: 'Benign-keratosis-like-lesions',
-    3: 'Basal-cell-carcinoma',
-    4: 'Actinic-keratoses',
-    5: 'Vascular-lesions',
-    6: 'Dermatofibroma'
-}
 
 def upload_to_firebase(local_file_path, filename):
     bucket = storage.bucket()
@@ -77,6 +48,13 @@ def predict():
     age_approx = int(data['age_approx'])
     anatom_site_general_challenge = int(data['anatom_site_general_challenge'])
     image = data['image_url']
+    user_id = data['user_id']
+    doctor_id = data['doctor_id']
+    doctor_name = data['doctor_name']
+    doctor_email = data['doctor_email']
+    user_profile = data['user_profile']
+    user_name = data['user_name']
+    user_email = data['user_email']
 
     
     client = Client("Yasiru2002/Melanoma_Model")
@@ -87,22 +65,156 @@ def predict():
             anatom_site_general_challenge= anatom_site_general_challenge,
             api_name="/predict"
     )
+    melanoma_probability = float(result[0])
+    if melanoma_probability > 0.65:       
+        image_path_1 = result[1]
+        image_path_2 = result[2]
 
+        # Upload images to Firebase and get the URLs
+        current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+        firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
+        firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
 
-    image_path_1 = result[1]
-    image_path_2 = result[2]
+        create_mel_report(user_id, user_name,user_email,doctor_id, melanoma_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile)
 
-    # Upload images to Firebase and get the URLs
-    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
-    firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
+        return jsonify({'result': 'Success'})
 
-    # Print Firebase URLs in the console
-    print("Image 1 URL:", firebase_url_1)
-    print("Image 2 URL:", firebase_url_2)
+    else:
+        client = Client("Yasiru2002/five_diseases_model")
+        result = client.predict(
+		image=handle_file(image),
+		api_name="/predict"
+        )  
+        disease_probability = result[0] 
+        image_path_1 = result[1]
+        image_path_2 = result[2]
+
+        # Upload images to Firebase and get the URLs
+        current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+        firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
+        firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
+
+        disease_class = disease_probability.index(max(disease_probability))
+        disease_probability = max(disease_probability)
+
+        create_dis_report(user_id,user_name,user_email, doctor_id,  disease_class,disease_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile)
+
+        return jsonify({'result': 'Success'})
     
+    return jsonify({'result': 'Success'})
 
-    return jsonify({'result': 'Melanoma', 'probability': 0.9})
+def create_mel_report(user_id,user_name,user_email, doctor_id, melanoma_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile):
+    collection = db['report']
+
+    if sex == 0: 
+        sex = 'Male'
+    else: 
+        sex = "Female"
+
+    if anatom_site_general_challenge == 0:
+        anatom_site_general_challenge = 'Torso'
+    elif anatom_site_general_challenge == 1:
+        anatom_site_general_challenge = 'Lower Extremity'
+    elif anatom_site_general_challenge == 2:
+        anatom_site_general_challenge = 'Upper Extremity'
+    elif anatom_site_general_challenge == 3:
+        anatom_site_general_challenge = 'Head/Neck'
+    elif anatom_site_general_challenge == 4:
+        anatom_site_general_challenge = 'Palms/Soles'
+    elif anatom_site_general_challenge == 5:
+        anatom_site_general_challenge = 'Oral/Genital'
+
+    report = {
+        'user_id': user_id,
+        'user_name': user_name,
+        'doctor_id': doctor_id,
+        'date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'status': 'Pending',
+        'model_accuracy': "Undefined",
+        'melanoma_probability': melanoma_probability,
+        'xai_image_1': firebase_url_1,
+        'xai_image_2': firebase_url_2,
+        'image': image,
+        'sex' : sex,
+        'age': age_approx,
+        'anatom_site_general_challenge': anatom_site_general_challenge,
+        'doctor_name': doctor_name,
+        'doctor_email': doctor_email,
+        'user_profile': user_profile,
+        'doctor_comment': "None",
+        'user_email': user_email,
+        'is_melanoma': "Yes"
+
+    }
+
+    # Insert the report to the database
+    result = collection.insert_one(report)
+    print(f"Report inserted with ID: {result.inserted_id}")
+
+def create_dis_report(user_id,user_name, user_email,doctor_id,  disease_class,disease_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile):
+    collection = db['report']
+
+    if sex == 0: 
+        sex = 'Male'
+    else: 
+        sex = "Female"
+
+    if anatom_site_general_challenge == 0:
+        anatom_site_general_challenge = 'Torso'
+    elif anatom_site_general_challenge == 1:
+        anatom_site_general_challenge = 'Lower Extremity'
+    elif anatom_site_general_challenge == 2:
+        anatom_site_general_challenge = 'Upper Extremity'
+    elif anatom_site_general_challenge == 3:
+        anatom_site_general_challenge = 'Head/Neck'
+    elif anatom_site_general_challenge == 4:
+        anatom_site_general_challenge = 'Palms/Soles'
+    elif anatom_site_general_challenge == 5:
+        anatom_site_general_challenge = 'Oral/Genital'
+
+    if disease_probability > 0.5:
+        if disease_class == 0:
+            disease_class = 'Basal Cell Carcinoma (bcc)'
+        elif disease_class == 1:
+            disease_class = 'Actinic Keratoses and Intraepithelial Carcinoma (akiec)'
+        elif disease_class == 2:
+            disease_class = 'benign keratosis-like lesions (bkl)'
+        elif disease_class == 3:
+            disease_class = 'Dermatofibroma (df)'
+        elif disease_class == 4:
+            disease_class = 'Vascular Lesions (vasc)'
+    else:
+        disease_class = 'No Disease Detected. Seek a doctor for further evaluation'
+
+    report = {
+        'user_id': user_id,
+        'user_name': user_name,
+        'doctor_id': doctor_id,
+        'date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'status': 'Pending',
+        'model_accuracy': "Undefined",
+        'disease_class': disease_class,
+        'disease_probability': disease_probability,
+        'xai_image_1': firebase_url_1,
+        'xai_image_2': firebase_url_2,
+        'image': image,
+        'sex' : sex,
+        'age': age_approx,
+        'anatom_site_general_challenge': anatom_site_general_challenge,
+        'doctor_name': doctor_name,
+        'doctor_email': doctor_email,
+        'user_profile': user_profile,
+        'doctor_comment': "None",
+        'user_email': user_email,
+        'is_melanoma': "No"
+
+    }
+
+    # Insert the report to the database
+    result = collection.insert_one(report)
+    print(f"Report inserted with ID: {result.inserted_id}")
+
+
 
 @app.route('/chatbot', methods=['POST'])
 def handle_diagnosis():
@@ -127,6 +239,18 @@ def google_login():
 @app.route('/getdoctor', methods=['POST'])
 def get_doctor():
     return get_Doctor(request,db)
+
+@app.route('/getreports', methods=['POST'])
+def get_report():
+    return get_Report(request,db)
+
+@app.route('/updatereportstatus', methods=['POST'])
+def update_report():
+    return update_report_status(request,db)
+   
+@app.route('/getreport/<report_id>', methods=['GET'])
+def get_report_by_id(report_id):
+    return get_unique_report(report_id,request,db)
 
 
 

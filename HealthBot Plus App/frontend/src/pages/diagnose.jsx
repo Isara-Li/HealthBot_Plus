@@ -20,7 +20,9 @@ export default function Diagnose() {
         `Age - ${currentUser.age}`,
     ];
 
-    const [dtitle, setDtitle] = useState("Dr. Fernando"); // State to store doctor details
+    const [doctorData, setDoctorData] = useState(null);
+
+    const [dtitle, setDtitle] = useState("Dr. Fernando");
     const [dimageSrc, setDimageSrc] = useState("https://cdn-icons-png.flaticon.com/512/3774/3774299.png");
     const [ddescription, setDdescription] = useState([
         "ID - 12345",
@@ -62,7 +64,7 @@ export default function Diagnose() {
                 if (data.error) {
                     console.error('Error:', data.error);
                 } else {
-                    // Update doctor details
+                    setDoctorData(data);
                     setDtitle(data.name || 'Doctor');
                     setDimageSrc(data.image || dimageSrc);
                     setDdescription([
@@ -127,14 +129,22 @@ export default function Diagnose() {
             return;
         }
 
-        const encodedBodyPart = bodyPartEncoding[bodyPart] || bodyPartEncoding['unknown'];
+        const encodedBodyPart = bodyPartEncoding[bodyPart];
 
         const payload = {
             image: uploadedImage,
             sex: pgender === 'male' ? 0 : 1,
             age_approx: page,
             anatom_site_general_challenge: encodedBodyPart,
-            image_url: uploadedImage
+            image_url: uploadedImage,
+            user_id: currentUser._id,
+            doctor_id: currentUser.doctor_id,
+            user_name: currentUser.name,
+            doctor_name: doctorData.name,
+            doctor_email: doctorData.email,
+            user_profile: currentUser.profile,
+            user_name: currentUser.name,
+            user_email: currentUser.email,
         };
 
         try {
