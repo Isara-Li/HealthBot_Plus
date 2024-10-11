@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import { useDispatch } from "react-redux";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
-
+import Swal from 'sweetalert2'
 
 import { deleteUserSuccess } from "../redux/user/userSlice";
 
@@ -108,9 +108,22 @@ const Doctor = ({ productLogo }) => {
   };
 
   const handlelogout = () => {
-    dispatch(deleteUserSuccess());
-    navigate('/');
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to Sign Out!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sign Out"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteUserSuccess()); // Dispatch logout action
+        navigate('/');
+      }
+    });
   };
+
 
   const handleSaveChanges = () => {
     setIsEditing(false);
@@ -142,7 +155,7 @@ const Doctor = ({ productLogo }) => {
               <p className="text-lg text-gray-600">Email: {doctorData.email}</p>
               <p className="text-lg text-gray-600">Age: {doctorData.age}</p>
               <p className="text-lg text-gray-600">Country: {doctorData.country}</p>
-              <button className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60" onClick={handlelogout}>Logout</button>
+              <button className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60" onClick={handlelogout}>Sign out</button>
             </div>
           </div>
         </div>

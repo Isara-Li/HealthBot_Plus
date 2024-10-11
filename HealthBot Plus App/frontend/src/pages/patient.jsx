@@ -10,6 +10,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import { app } from '../firebase'
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import Swal from 'sweetalert2'
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
@@ -87,9 +88,22 @@ const Patient = () => {
 
 
   const handlelogout = () => {
-    dispatch(deleteUserSuccess());
-    navigate('/');
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to Sign Out!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sign Out"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteUserSuccess()); // Dispatch logout action
+        navigate('/');
+      }
+    });
   };
+
 
   const handleSaveChanges = async () => {
     let downloadURL = patientData.profile;
@@ -245,7 +259,7 @@ const Patient = () => {
                   className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60"
                   onClick={handlelogout}
                 >
-                  Logout
+                  Sign out
                 </button>
               </div>
 
