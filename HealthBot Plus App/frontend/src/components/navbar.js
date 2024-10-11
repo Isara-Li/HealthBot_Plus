@@ -28,7 +28,9 @@ function Navbar() {
   };
 
   const handleProfile = () => {
-    navigate(`/patient/${currentUser._id}`);
+    if (currentUser.is_patient) navigate(`/patient/${currentUser._id}`);
+    else
+    navigate(`/doctor/${currentUser._id}`);
   };
 
   const handleLogoClick = () => {

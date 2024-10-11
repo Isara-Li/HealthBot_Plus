@@ -131,20 +131,44 @@ const Report = () => {
         </div>
 
         {/* Image section */}
-        <div className="ml-8">
-          <img
-            src={report.image}  // Replace with the image source
-            alt="Patient Profile"
-            className="w-42 h-32 object-cover box-full rounded-lg"
-          />
-        </div>
+        <img
+          src={report.image}
+          alt="Explanation Image 1"
+          className="w-60 h-32 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-125"
+          onClick={() => window.open(report.image, "_blank")}
+        />
       </div>
 
       {
         report.is_melanoma === "Yes" ? (
-          <div>
+          <div className="bg-gray-100 shadow-lg rounded-lg p-6 my-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-semibold text-left my-8">Model Prediction</h1>
+              <p className="text-lg mb-4">
+                <strong>Melanoma Probability: </strong>
+                <span className="text-red-500 font-bold">
+                  {(report.melanoma_probability * 100).toFixed(2)}%
+                </span>
+              </p>
+            </div>
 
+            {/* Image section */}
+            <div className="ml-8 flex space-x-4">
+              <img
+                src={report.xai_image_1}
+                alt="Explanation Image 1"
+                className="w-60 h-32 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-125"
+                onClick={() => window.open(report.xai_image_1, "_blank")}
+              />
+              <img
+                src={report.xai_image_2}
+                alt="Explanation Image 2"
+                className="w-60 h-32 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-125"
+                onClick={() => window.open(report.xai_image_2, "_blank")}
+              />
+            </div>
           </div>
+
         ) : (
           <div>
 
