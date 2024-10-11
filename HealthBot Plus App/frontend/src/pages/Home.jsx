@@ -111,10 +111,10 @@ const SkinVisionPage = () => {
               onClick={handleTrySkinVisionClick} // Handle the button click
               className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
             >
-              Try SkinVision
+              Try HealthBot
             </button>
           </div>
-          {/* Right Image Content */}
+
           <div className="max-w-md">
             <img
               src="https://www.verywellhealth.com/thmb/qq1afE3eNsGV8bVy29-Zi_oqrAE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/VWH-JoshSeong-SkingScreening-Recirc-512cda1d7c674b969a03a36c20d7d178.jpg"
@@ -172,7 +172,7 @@ const SkinVisionPage = () => {
               size={25}
               style={{ padding: "1px", color: "white" }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent the event from bubbling up to the parent div
+                e.stopPropagation();
                 setChatClicked(false);
               }}
             />

@@ -14,7 +14,7 @@ from firebase_admin import credentials, storage
 from io import BytesIO
 import urllib.parse
 from datetime import datetime
-from Report import get_Report,update_report_status,get_unique_report
+from Report import get_Report,update_report_status,get_unique_report,update_report_comment,update_model_accuracy,get_Report_Patient
 
 
 app = Flask(__name__)
@@ -251,6 +251,18 @@ def update_report():
 @app.route('/getreport/<report_id>', methods=['GET'])
 def get_report_by_id(report_id):
     return get_unique_report(report_id,request,db)
+
+@app.route('/updatereport/<report_id>', methods=['POST'])
+def update_doctor_comment(report_id):
+    return update_report_comment(report_id,request,db)
+
+@app.route('/updatereportaccuracy/<report_id>', methods=['POST'])
+def update_accuracy(report_id):
+    return update_model_accuracy(report_id,request,db)
+
+@app.route('/getreportsforpatient', methods=['POST'])
+def get_report_patient():
+    return get_Report_Patient(request,db)
 
 
 

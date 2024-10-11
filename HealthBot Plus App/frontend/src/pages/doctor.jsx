@@ -5,6 +5,9 @@ import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
 import { useSelector } from 'react-redux'
 import { useDispatch } from "react-redux";
+import AudioRecorder from "../components/AudioRecorder";
+import { IoCloseCircleOutline } from "react-icons/io5";
+
 
 import { deleteUserSuccess } from "../redux/user/userSlice";
 
@@ -18,6 +21,23 @@ const Doctor = ({ productLogo }) => {
   const navigate = useNavigate();
   const { currentUser } = useSelector(state => state.user);
   const dispatch = useDispatch();
+  const [isVisible, setIsVisible] = useState(false);
+  const [chatClicked, setChatClicked] = useState(false);
+  const [showRecorder, setShowRecorder] = useState(false);
+
+
+  useEffect(() => {
+    let timer;
+    if (chatClicked) {
+      timer = setTimeout(() => {
+        setShowRecorder(true);
+      }, 200);
+    } else {
+      setShowRecorder(false);
+    }
+
+    return () => clearTimeout(timer); // Cleanup timer if chatClicked changes before the timer completes
+  }, [chatClicked]);
 
 
   useEffect(() => {
@@ -168,10 +188,31 @@ const Doctor = ({ productLogo }) => {
           </table>
         </div>
       </div>
-      <button className="fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl p-2 flex items-center hover:bg-blue-700">
-        <FaRocketchat size={14} style={{ color: "white" }} />
-        <div className="w-2"></div> Want to chat?
-      </button>
+      <div
+        onClick={() => setChatClicked(true)}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
+      >
+        {chatClicked ? (
+          <div className="flex flex-col items-start justify-center">
+            <IoCloseCircleOutline
+              size={25}
+              style={{ padding: "1px", color: "white" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setChatClicked(false);
+              }}
+            />
+            {showRecorder && <AudioRecorder />}
+          </div>
+        ) : (
+          <>
+            <FaRocketchat size={20} style={{ color: "white" }} />
+            <div className="w-2"></div>
+            <p>want to chat?</p>
+          </>
+        )}
+      </div>
     </div>
   );
 };

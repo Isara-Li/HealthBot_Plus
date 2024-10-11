@@ -8,6 +8,8 @@ import { signInSuccess, signInFailure, deleteUserSuccess } from "../redux/user/u
 import { useDispatch } from "react-redux";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { app } from '../firebase'
+import AudioRecorder from "../components/AudioRecorder";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
@@ -18,10 +20,26 @@ const Patient = () => {
   const [file, setFile] = useState(null);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [chatClicked, setChatClicked] = useState(false);
+  const [showRecorder, setShowRecorder] = useState(false);
+
 
   const [progress, setProgress] = useState(0);
 
   const { currentUser } = useSelector(state => state.user); // get the user from the redux store
+
+  useEffect(() => {
+    let timer;
+    if (chatClicked) {
+      timer = setTimeout(() => {
+        setShowRecorder(true);
+      }, 200);
+    } else {
+      setShowRecorder(false);
+    }
+
+    return () => clearTimeout(timer); // Cleanup timer if chatClicked changes before the timer completes
+  }, [chatClicked]);
 
   useEffect(() => {
     fetchPatientData();
@@ -41,44 +59,26 @@ const Patient = () => {
   };
 
   const fetchReportHistory = async () => {
-    const data = [
-      {
-        id: 1,
-        date: "2024-08-20",
-        investigation: "Cancer",
-        status: "Reviewed",
-        reviewedOn: "2024-08-22",
-      },
-      {
-        id: 2,
-        date: "2024-07-15",
-        investigation: "Atopic Dermatitis",
-        status: "Pending",
-        reviewedOn: null,
-      },
-      {
-        id: 3,
-        date: "2023-06-10",
-        investigation: "Benign Keratosis",
-        status: "Reviewed",
-        reviewedOn: "2023-06-12",
-      },
-      {
-        id: 4,
-        date: "2024-05-05",
-        investigation: "Dermatofibroma",
-        status: "Pending",
-        reviewedOn: null,
-      },
-      {
-        id: 5,
-        date: "2023-04-01",
-        investigation: "Actinic Keratosis",
-        status: "Reviewed",
-        reviewedOn: "2023-04-03",
-      },
-    ];
-    setReports(data);
+    try {
+      const response = await fetch("http://localhost:5000/getreportsforpatient", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentUser._id }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const data = JSON.parse(result.reports);
+        setReports(data);
+        console.log("Report history:", data);
+      } else {
+        console.error("Failed to fetch reports");
+      }
+    } catch (error) {
+      console.error("Error fetching report history:", error);
+    }
   };
 
   const handleEditToggle = () => {
@@ -304,64 +304,70 @@ const Patient = () => {
             </div>
           )}
         </div>
-
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Report History
-          </h2>
+        <div className="bg-gray-200 shadow-lg rounded-lg p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Report History</h2>
           <table className="min-w-full bg-white border rounded-lg overflow-hidden">
             <thead className="bg-gray-50">
               <tr>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                  Report ID
-                </th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                  Date
-                </th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                  Investigation
-                </th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                  Status
-                </th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                  Reviewed On
-                </th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">
-                  Actions
-                </th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">Report ID</th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">Patient Name</th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">Patient ID</th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">Date</th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">Status</th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-64">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200 rounded-lg">
               {reports.map((report) => (
-                <tr key={report.id} className="hover:bg-gray-50 transition">
-                  <td className="p-3 text-sm text-gray-700">{report.id}</td>
-                  <td className="p-3 text-sm text-gray-700">{report.date}</td>
-                  <td className="p-3 text-sm text-gray-700">
-                    {report.investigation}
-                  </td>
-                  <td className="p-3 text-sm text-gray-700">{report.status}</td>
-                  <td className="p-3 text-sm text-gray-700">
-                    {report.reviewedOn || "N/A"}
-                  </td>
-                  <td className="p-3">
+                <tr
+                  key={report._id.$oid}
+                  className={`doctor-table-row ${report.status === "Reviewed" ? "bg-green-100" : ""} `}
+                >
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report._id.$oid}</td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.user_name}</td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.user_id}</td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.date}</td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.status}</td>
+                  <td className="doctor-table-td p-3 flex items-center space-x-2">
                     <button
-                      className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-                      onClick={() => handleReportClick(report.id)}
+                      className="doctor-view-button bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+                      onClick={() => navigate(`/report/${report._id.$oid}`)}
                     >
-                      View Full Report
+                      Preview Report
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </div>
-      <button className="fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl p-2 flex items-center hover:bg-blue-700">
-        <FaRocketchat size={14} style={{ color: "white" }} />
-        <div className="w-2"></div> Want to chat?
-      </button>
+      <div
+        onClick={() => setChatClicked(true)}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
+      >
+        {chatClicked ? (
+          <div className="flex flex-col items-start justify-center">
+            <IoCloseCircleOutline
+              size={25}
+              style={{ padding: "1px", color: "white" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setChatClicked(false);
+              }}
+            />
+            {showRecorder && <AudioRecorder />}
+          </div>
+        ) : (
+          <>
+            <FaRocketchat size={20} style={{ color: "white" }} />
+            <div className="w-2"></div>
+            <p>want to chat?</p>
+          </>
+        )}
+      </div>
     </div>
   );
 };
