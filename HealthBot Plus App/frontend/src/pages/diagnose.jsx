@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navbar";
 import PatientCard from "../components/patient_card";
-import { useDispatch } from "react-redux";
-import { useSelector } from 'react-redux';
-import { app } from '../firebase'
+import { useDispatch, useSelector } from "react-redux";
+import { app } from '../firebase';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-
+import { Alert } from '@mui/material'; // Import MUI Alert
 
 export default function Diagnose() {
     const dispatch = useDispatch();
     const { currentUser } = useSelector(state => state.user);
+    const [submitting, setSubmitting] = useState(false);
 
-    // Store the parameters in variables
     const ptitle = currentUser.name;
     const pimageSrc = currentUser.profile;
     const pdescription = [
@@ -21,7 +20,6 @@ export default function Diagnose() {
     ];
 
     const [doctorData, setDoctorData] = useState(null);
-
     const [dtitle, setDtitle] = useState("Dr. Fernando");
     const [dimageSrc, setDimageSrc] = useState("https://cdn-icons-png.flaticon.com/512/3774/3774299.png");
     const [ddescription, setDdescription] = useState([
@@ -29,9 +27,8 @@ export default function Diagnose() {
         "Gender - Male",
         "Email - liyanageisara@gmail.com",
     ]);
-    const [loading, setLoading] = useState(true); // State to track loading status
+    const [loading, setLoading] = useState(true);
 
-    // Dictionary to encode body part
     const bodyPartEncoding = {
         'torso': 0,
         'lower extremity': 1,
@@ -41,14 +38,14 @@ export default function Diagnose() {
         'oral/genital': 5
     };
 
-    // State to store uploaded image and selected body part
     const [uploadedImage, setUploadedImage] = useState(null);
     const [bodyPart, setBodyPart] = useState("");
     const [isUploading, setIsUploading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false); // State to control alert visibility
+    const [showReportAlert, setReportShowAlert] = useState(false);
     const pgender = currentUser.sex;
     const page = currentUser.age;
 
-    // Fetch doctor details when component mounts
     useEffect(() => {
         const fetchDoctorDetails = async () => {
             try {
@@ -84,7 +81,6 @@ export default function Diagnose() {
         fetchDoctorDetails();
     }, [currentUser.doctor_id]);
 
-    // Handle image upload and store it in Firebase
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -96,41 +92,38 @@ export default function Diagnose() {
             uploadTask.on(
                 'state_changed',
                 (snapshot) => {
-                    // Observe progress of the upload
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     console.log('Upload is ' + progress + '% done');
                 },
                 (error) => {
-                    // Handle unsuccessful uploads
                     console.error('Upload failed:', error);
                     setIsUploading(false);
                 },
                 () => {
-                    // Handle successful uploads
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                         console.log('File available at', downloadURL);
-                        setIsUploading(false); // Finish uploading
-                        setUploadedImage(downloadURL); // Set the download URL to display the image
+                        setIsUploading(false);
+                        setUploadedImage(downloadURL);
                     });
                 }
             );
         }
     };
 
-    // Handle body part selection
     const handleBodyPartChange = (e) => {
         setBodyPart(e.target.value);
     };
 
-    // Handle form submission
     const handleSubmit = async () => {
         if (!uploadedImage || !bodyPart) {
-            alert("Please upload an image and select a body part.");
+            setShowAlert(true);
             return;
         }
 
-        const encodedBodyPart = bodyPartEncoding[bodyPart];
+        setShowAlert(false);
+        setSubmitting(true);
 
+        const encodedBodyPart = bodyPartEncoding[bodyPart];
         const payload = {
             image: uploadedImage,
             sex: pgender === 'male' ? 0 : 1,
@@ -157,12 +150,16 @@ export default function Diagnose() {
             });
 
             const data = await response.json();
-            if (data.error) {
-                alert(`Error: ${data.error}`);
+            if (data.result == 'Success' || data.result == 'Error in the Melanoma Model' || data.result == 'Error in the Disease Model') {
+                setSubmitting(false);
+                setReportShowAlert(true);
             } else {
+                setSubmitting(false);
+
                 console.log(data);
             }
         } catch (error) {
+            setSubmitting(false);
             console.error('Error:', error);
             alert('An error occurred while making the prediction.');
         }
@@ -179,7 +176,6 @@ export default function Diagnose() {
             </div>
 
             <div className="flex flex-wrap justify-between left-10 py-4 px-11">
-                {/* Patient card section */}
                 <PatientCard
                     title={ptitle}
                     imageSrc={pimageSrc}
@@ -192,7 +188,7 @@ export default function Diagnose() {
                 />
 
                 {/* Container for the image upload and dropdown */}
-                <div className={`flex flex-col bg-gray-300 items-start p-4 border border-gray-400 rounded-lg shadow-lg w-full max-w-md ${uploadedImage ? 'h-auto' : 'h-64'}`}>
+                <div className={`flex flex-col bg-gray-300 items-start p-4 border border-gray-400 rounded-lg shadow-lg w-full max-w-md ${uploadedImage ? 'h-auto' : 'h-auto'}`}>
                     <label className="mb-2 font-bold text-gray-700">Upload Image:</label>
                     <input
                         type="file"
@@ -201,8 +197,6 @@ export default function Diagnose() {
                         className="mb-4"
                     />
                     {isUploading && <div className='text-green-500'>Uploading image...</div>}
-
-
 
                     {uploadedImage && (
                         <img
@@ -227,17 +221,56 @@ export default function Diagnose() {
                         <option value="palms/soles">Palm/Soles</option>
                         <option value="oral/genital">Oral/Genital</option>
                     </select>
+                    {submitting ? (
+                        <div className="w-full flex justify-center">
+                            <button
+                                className="w-full p-2 bg-blue-500 text-white rounded flex items-center justify-center cursor-not-allowed"
+                                disabled
+                            >
+                                {/* Spinning wheel */}
+                                <div role="status" className="flex items-center justify-center">
+                                    <svg aria-hidden="true" className="w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                                    </svg>
+                                </div>
+                                Generating Report...
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="w-full flex justify-center">
+                            <button
+                                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                onClick={handleSubmit}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    )}
+                    {showReportAlert && (
+                        <div className="mt-4 w-full max-w-md">
+                            <Alert variant="filled" severity="success">
+                                Report generated sucessfully.
+                            </Alert>
+                        </div>
+                    )}
 
-                    <div className="w-full flex justify-center">
-                        <button
-                            className="w-1/2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={handleSubmit}
-                        >
-                            Submit
-                        </button>
-                    </div>
+
+
+                    {showAlert && (
+                        <div className="mt-4 w-full max-w-md">
+                            <Alert variant="outlined" severity="error">
+                                Please upload an image and select a body part.
+                            </Alert>
+                        </div>
+                    )}
+
+
                 </div>
+
             </div>
+
+
         </div>
     );
 }

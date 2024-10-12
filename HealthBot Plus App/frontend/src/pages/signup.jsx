@@ -1,19 +1,12 @@
 import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRightLong,
-  faArrowLeftLong,
-} from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
-
 
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [transitionStage, setTransitionStage] = useState("fadeIn");
   const navigate = useNavigate();
-
 
   // State to store form data
   const [formData, setFormData] = useState({
@@ -25,7 +18,11 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    doctor: "",
   });
+
+  // State to store errors
+  const [errors, setErrors] = useState({});
 
   // Update form data
   const handleChange = (e) => {
@@ -35,13 +32,79 @@ const Signup = () => {
     });
   };
 
+  // Validation function for step 1
+  const validateStep1 = () => {
+    const newErrors = {};
+
+    // Name validation
+    if (!formData.name) {
+      newErrors.name = "Name is required";
+    }
+
+    // Birthday validation
+    if (!formData.birthday) {
+      newErrors.birthday = "Birthday is required";
+    } else {
+      const birthdayDate = new Date(formData.birthday);
+      const today = new Date();
+      if (birthdayDate > today) {
+        newErrors.birthday = "Birthday cannot be in the future";
+      }
+    }
+
+    // Sex validation
+    if (!formData.sex) {
+      newErrors.sex = "Please select your gender";
+    }
+
+    // Description validation
+    if (!formData.description) {
+      newErrors.description = "Description is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Validation function for step 2
+  const validateStep2 = () => {
+    const newErrors = {};
+
+    // Email validation
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    // Doctor selection validation
+    if (!formData.doctor) {
+      newErrors.doctor = "Please select a doctor";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   // Handle next step
   const handleNextStep = () => {
-    setTransitionStage("fadeOut");
-    setTimeout(() => {
-      setStep(step + 1);
-      setTransitionStage("fadeIn");
-    }, 300);
+    if (step === 1 && validateStep1()) {
+      setTransitionStage("fadeOut");
+      setTimeout(() => {
+        setStep(step + 1);
+        setTransitionStage("fadeIn");
+      }, 300);
+    }
   };
 
   // Handle previous step
@@ -55,30 +118,27 @@ const Signup = () => {
 
   // Handle form submission
   const handleSubmit = async () => {
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+    if (validateStep2()) {
+      // Sending data to the backend using fetch API
+      try {
+        const response = await fetch("http://localhost:5000/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
 
-    // Sending data to the backend using fetch API
-    try {
-      const response = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-      if (result.status === 'Ok') {
-        console.log("User signed up successfully:", result.user);
-        navigate("/");
-      } else {
-        console.log("Signup failed:", result.message);
+        const result = await response.json();
+        if (result.status === "Ok") {
+          console.log("User signed up successfully:", result.user);
+          navigate("/");
+        } else {
+          console.log("Signup failed:", result.message);
+        }
+      } catch (error) {
+        console.error("Error:", error);
       }
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 
@@ -114,6 +174,9 @@ const Signup = () => {
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Enter your name"
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-xs">{errors.name}</p>
+                )}
               </div>
               <div className="mb-3">
                 <label className="block text-gray-700 text-sm">Country</label>
@@ -135,6 +198,9 @@ const Signup = () => {
                   onChange={handleChange}
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 opacity-75"
                 />
+                {errors.birthday && (
+                  <p className="text-red-500 text-xs">{errors.birthday}</p>
+                )}
               </div>
               <div className="mb-3">
                 <label className="block text-gray-700 text-sm">Sex</label>
@@ -150,6 +216,9 @@ const Signup = () => {
                   <option value="other">Other</option>
                   <option value="prefer_not_to_say">Prefer not to say</option>
                 </select>
+                {errors.sex && (
+                  <p className="text-red-500 text-xs">{errors.sex}</p>
+                )}
               </div>
               <div className="mb-5">
                 <label className="block text-gray-700 text-sm">Description</label>
@@ -161,6 +230,9 @@ const Signup = () => {
                   rows="3"
                   placeholder="Tell us about yourself"
                 ></textarea>
+                {errors.description && (
+                  <p className="text-red-500 text-xs">{errors.description}</p>
+                )}
               </div>
               <div className="flex justify-end">
                 <button
@@ -179,9 +251,7 @@ const Signup = () => {
                 Create Account
               </h2>
               <div className="mb-3">
-                <label className="block text-gray-700 text-sm">
-                  Email Address
-                </label>
+                <label className="block text-gray-700 text-sm">Email Address</label>
                 <input
                   type="email"
                   name="email"
@@ -190,6 +260,9 @@ const Signup = () => {
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Enter your email"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email}</p>
+                )}
               </div>
               <div className="mb-3">
                 <label className="block text-gray-700 text-sm">Password</label>
@@ -201,11 +274,12 @@ const Signup = () => {
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Enter your password"
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs">{errors.password}</p>
+                )}
               </div>
-              <div className="mb-5">
-                <label className="block text-gray-700 text-sm">
-                  Confirm Password
-                </label>
+              <div className="mb-3">
+                <label className="block text-gray-700 text-sm">Confirm Password</label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -214,7 +288,30 @@ const Signup = () => {
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Confirm your password"
                 />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
+
+              {/* Doctor Selection Dropdown */}
+              <div className="mb-5">
+                <label className="block text-gray-700 text-sm">Select Doctor</label>
+                <select
+                  name="doctor"
+                  value={formData.doctor}
+                  onChange={handleChange}
+                  className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="">-- Select Doctor --</option>
+                  <option value="Dr. Athula">Dr. Athula</option>
+                </select>
+                {errors.doctor && (
+                  <p className="text-red-500 text-xs">{errors.doctor}</p>
+                )}
+              </div>
+
               <div className="flex justify-between items-center">
                 <button
                   onClick={handlePreviousStep}
