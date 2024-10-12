@@ -15,6 +15,9 @@ from io import BytesIO
 import urllib.parse
 from datetime import datetime
 from Report import get_Report,update_report_status,get_unique_report,update_report_comment,update_model_accuracy,get_Report_Patient
+from resetPassword import reset_Password
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 
 app = Flask(__name__)
@@ -31,6 +34,13 @@ firebase_admin.initialize_app(cred, {
 })
 
 db = client['healthbot'] 
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'liyanageisara@gmail.com'
+app.config['MAIL_PASSWORD'] = ""
+app.config['SECRET_KEY'] = '123'
 
 
 def upload_to_firebase(local_file_path, filename):
@@ -269,6 +279,12 @@ def update_accuracy(report_id):
 @app.route('/getreportsforpatient', methods=['POST'])
 def get_report_patient():
     return get_Report_Patient(request,db)
+
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    mail = Mail(app)
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return reset_Password(mail,s,request,db)
 
 
 
