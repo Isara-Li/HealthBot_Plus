@@ -5,11 +5,13 @@ import { FaRocketchat } from "react-icons/fa";
 import { motion } from "framer-motion";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux"; // Redux imports
 
 const Counter = ({ end }) => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
+  const currentUser = useSelector((state) => state.user?.currentUser || null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -32,7 +34,7 @@ const Counter = ({ end }) => {
       }
     };
   }, []);
-
+  console.log(currentUser);
   useEffect(() => {
     if (isVisible) {
       let start = 0;
@@ -63,8 +65,8 @@ const Counter = ({ end }) => {
 const SkinVisionPage = () => {
   const [chatClicked, setChatClicked] = useState(false);
   const [showRecorder, setShowRecorder] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
-
+  const { currentUser } = useSelector((state) => state.user || {});
+  const navigate = useNavigate();
   useEffect(() => {
     let timer;
     if (chatClicked) {
@@ -107,12 +109,27 @@ const SkinVisionPage = () => {
             <h1 className="text-6xl font-bold my-4 space-x-4">
               Are your moles getting under your skin?
             </h1>
-            <button
-              onClick={handleTrySkinVisionClick} // Handle the button click
-              className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
-            >
-              Try HealthBot
-            </button>
+
+            {currentUser ? (
+              currentUser.is_patient == true ? (
+                <button
+                  onClick={handleTrySkinVisionClick} // Handle the button click
+                  className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
+                >
+                  Try HealthBot
+                </button>
+              ) : (
+                <div></div>
+              )
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
+              >
+                Log in to Try HealthBot
+              </button>
+            )}
+
           </div>
 
           <div className="max-w-md">
