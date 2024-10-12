@@ -43,63 +43,69 @@ def upload_to_firebase(local_file_path, filename):
 # Endpoint for prediction
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json       
-    sex = int(data['sex']) 
-    age_approx = int(data['age_approx'])
-    anatom_site_general_challenge = int(data['anatom_site_general_challenge'])
-    image = data['image_url']
-    user_id = data['user_id']
-    doctor_id = data['doctor_id']
-    doctor_name = data['doctor_name']
-    doctor_email = data['doctor_email']
-    user_profile = data['user_profile']
-    user_name = data['user_name']
-    user_email = data['user_email']
+    try:
+        data = request.json       
+        sex = int(data['sex']) 
+        age_approx = int(data['age_approx'])
+        anatom_site_general_challenge = int(data['anatom_site_general_challenge'])
+        image = data['image_url']
+        user_id = data['user_id']
+        doctor_id = data['doctor_id']
+        doctor_name = data['doctor_name']
+        doctor_email = data['doctor_email']
+        user_profile = data['user_profile']
+        user_name = data['user_name']
+        user_email = data['user_email']
 
-    
-    client = Client("Yasiru2002/Melanoma_Model")
-    result = client.predict(
-            image=handle_file(image),
-            sex=sex,
-            age_approx=age_approx,
-            anatom_site_general_challenge= anatom_site_general_challenge,
-            api_name="/predict"
-    )
-    melanoma_probability = float(result[0])
-    if melanoma_probability > 0.65:       
-        image_path_1 = result[1]
-        image_path_2 = result[2]
+        
+        client = Client("Yasiru2002/Melanoma_Model")
+        result = client.predict(
+                image=handle_file(image),
+                sex=sex,
+                age_approx=age_approx,
+                anatom_site_general_challenge= anatom_site_general_challenge,
+                api_name="/predict"
+        )
+        melanoma_probability = float(result[0])
+        if melanoma_probability > 0.65:       
+            image_path_1 = result[1]
+            image_path_2 = result[2]
 
-        # Upload images to Firebase and get the URLs
-        current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
-        firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
+            # Upload images to Firebase and get the URLs
+            current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+            firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
+            firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
 
-        create_mel_report(user_id, user_name,user_email,doctor_id, melanoma_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile)
+            create_mel_report(user_id, user_name,user_email,doctor_id, melanoma_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile)
 
-        return jsonify({'result': 'Success'})
+            return jsonify({'result': 'Success'})
+    except:
+        return jsonify({'result': 'Error in the Melanoma Model'})
 
     else:
-        client = Client("Yasiru2002/five_diseases_model")
-        result = client.predict(
-		image=handle_file(image),
-		api_name="/predict"
-        )  
-        disease_probability = result[0] 
-        image_path_1 = result[1]
-        image_path_2 = result[2]
+        try:
+            client = Client("Yasiru2002/five_diseases_model")
+            result = client.predict(
+            image=handle_file(image),
+            api_name="/predict"
+            )  
+            disease_probability = result[0] 
+            image_path_1 = result[1]
+            image_path_2 = result[2]
 
-        # Upload images to Firebase and get the URLs
-        current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
-        firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
+            # Upload images to Firebase and get the URLs
+            current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+            firebase_url_1 = upload_to_firebase(image_path_1, f"xai_image_1_{current_time}.png")
+            firebase_url_2 = upload_to_firebase(image_path_2, f"xai_image_2_{current_time}.png")
 
-        disease_class = disease_probability.index(max(disease_probability))
-        disease_probability = max(disease_probability)
+            disease_class = disease_probability.index(max(disease_probability))
+            disease_probability = max(disease_probability)
 
-        create_dis_report(user_id,user_name,user_email, doctor_id,  disease_class,disease_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile)
+            create_dis_report(user_id,user_name,user_email, doctor_id,  disease_class,disease_probability, firebase_url_1, firebase_url_2,image,sex,age_approx,anatom_site_general_challenge,doctor_name,doctor_email,user_profile)
 
-        return jsonify({'result': 'Success'})
+            return jsonify({'result': 'Success'})
+        except:
+            return jsonify({'result': 'Error in the Disease Model'})
     
     return jsonify({'result': 'Success'})
 
