@@ -3,14 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
 import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
-import { useSelector } from 'react-redux'
-import { signInSuccess, signInFailure, deleteUserSuccess } from "../redux/user/userSlice";
+import { useSelector } from "react-redux";
+import {
+  signInSuccess,
+  signInFailure,
+  deleteUserSuccess,
+} from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { app } from '../firebase'
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../firebase";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
@@ -24,10 +33,9 @@ const Patient = () => {
   const [chatClicked, setChatClicked] = useState(false);
   const [showRecorder, setShowRecorder] = useState(false);
 
-
   const [progress, setProgress] = useState(0);
 
-  const { currentUser } = useSelector(state => state.user); // get the user from the redux store
+  const { currentUser } = useSelector((state) => state.user); // get the user from the redux store
 
   useEffect(() => {
     let timer;
@@ -54,20 +62,23 @@ const Patient = () => {
       age: currentUser.age,
       gender: currentUser.sex,
       contact: currentUser.email,
-      profile: currentUser.profile
+      profile: currentUser.profile,
     };
     setPatientData(data);
   };
 
   const fetchReportHistory = async () => {
     try {
-      const response = await fetch("http://localhost:5000/getreportsforpatient", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: currentUser._id }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/getreportsforpatient",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: currentUser._id }),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -86,7 +97,6 @@ const Patient = () => {
     setIsEditing(!isEditing);
   };
 
-
   const handlelogout = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -95,15 +105,14 @@ const Patient = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Sign Out"
+      confirmButtonText: "Sign Out",
     }).then(async (result) => {
       if (result.isConfirmed) {
         dispatch(deleteUserSuccess()); // Dispatch logout action
-        navigate('/');
+        navigate("/");
       }
     });
   };
-
 
   const handleSaveChanges = async () => {
     let downloadURL = patientData.profile;
@@ -118,9 +127,10 @@ const Patient = () => {
       await new Promise((resolve, reject) => {
         setIsUploading(true);
         uploadTask.on(
-          'state_changed',
+          "state_changed",
           (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setProgress(Math.round(progress));
           },
           (error) => {
@@ -149,10 +159,10 @@ const Patient = () => {
     };
     console.log(updatedData);
     try {
-      const response = await fetch('http://localhost:5000/update', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/update", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedData),
       });
@@ -162,10 +172,10 @@ const Patient = () => {
         const result = await response.json();
         dispatch(signInSuccess(result)); // Update user in Redux store
       } else {
-        console.error('Failed to update:', response.statusText);
+        console.error("Failed to update:", response.statusText);
       }
     } catch (error) {
-      console.error('Error occurred while updating:', error);
+      console.error("Error occurred while updating:", error);
     }
   };
 
@@ -173,7 +183,6 @@ const Patient = () => {
     navigate(`/report/${reportId}`);
   };
   console.log(currentUser.doctor_id);
-
 
   const totalReports = reports.length;
   const reviewedReports = reports.filter(
@@ -200,29 +209,29 @@ const Patient = () => {
 
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex justify-center">
           <div className="text-center">
-            {isUploading && <div className='text-green-500 my-1'>Uploading image...</div>}
+            {isUploading && (
+              <div className="text-green-500 my-1">Uploading image...</div>
+            )}
             {isEditing ? (
-
               <img
                 src={currentUser.profile}
                 alt="Profile"
-                className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
-                onClick={() => document.getElementById('fileInput').click()} // Trigger file input on image click
+                className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
+                onClick={() => document.getElementById("fileInput").click()} // Trigger file input on image click
               />
             ) : (
               <img
                 src={currentUser.profile}
                 alt="Profile"
-                className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
+                className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
               />
             )}
-
 
             <input
               id="fileInput"
               type="file"
               accept="image/*"
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               onChange={(e) => setFile(e.target.files[0])}
             />
 
@@ -234,9 +243,7 @@ const Patient = () => {
                 Patient ID: {currentUser._id}
               </p>
               <p className="text-lg text-gray-600">Age: {currentUser.age}</p>
-              <p className="text-lg text-gray-600">
-                Gender: {currentUser.sex}
-              </p>
+              <p className="text-lg text-gray-600">Gender: {currentUser.sex}</p>
               <p className="text-lg text-gray-600">
                 Contact: {currentUser.email}
               </p>
@@ -247,13 +254,15 @@ const Patient = () => {
                     onClick={handleEditToggle}
                   >
                     Back
-                  </button>) : (
+                  </button>
+                ) : (
                   <button
                     className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-60"
                     onClick={handleEditToggle}
                   >
                     Edit Personal Data
-                  </button>)}
+                  </button>
+                )}
 
                 <button
                   className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60"
@@ -262,7 +271,6 @@ const Patient = () => {
                   Sign out
                 </button>
               </div>
-
             </div>
           </div>
 
@@ -312,36 +320,60 @@ const Patient = () => {
                 >
                   Save Changes
                 </button>
-
               </div>
-
             </div>
           )}
         </div>
         <div className="bg-gray-200 shadow-lg rounded-lg p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Report History</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            Report History
+          </h2>
           <table className="min-w-full bg-white border rounded-lg overflow-hidden">
             <thead className="bg-gray-50">
               <tr>
-                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">Report ID</th>
-                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">Patient Name</th>
-                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">Patient ID</th>
-                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">Date</th>
-                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">Status</th>
-                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-64">Actions</th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">
+                  Report ID
+                </th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">
+                  Patient Name
+                </th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">
+                  Patient ID
+                </th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">
+                  Date
+                </th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">
+                  Status
+                </th>
+                <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-64">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 rounded-lg">
               {reports.map((report) => (
                 <tr
                   key={report._id.$oid}
-                  className={`doctor-table-row ${report.status === "Reviewed" ? "bg-green-100" : ""} `}
+                  className={`doctor-table-row ${
+                    report.status === "Reviewed" ? "bg-green-100" : ""
+                  } `}
                 >
-                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report._id.$oid}</td>
-                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.user_name}</td>
-                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.user_id}</td>
-                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.date}</td>
-                  <td className="doctor-table-td p-3 text-sm text-gray-700">{report.status}</td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">
+                    {report._id.$oid}
+                  </td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">
+                    {report.user_name}
+                  </td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">
+                    {report.user_id}
+                  </td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">
+                    {report.date}
+                  </td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">
+                    {report.status}
+                  </td>
                   <td className="doctor-table-td p-3 flex items-center space-x-2">
                     <button
                       className="doctor-view-button bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300"
@@ -353,14 +385,14 @@ const Patient = () => {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </div>
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
-          }`}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${
+          chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+        }`}
       >
         {chatClicked ? (
           <div className="flex flex-col items-start justify-center">
