@@ -15,7 +15,7 @@ from io import BytesIO
 import urllib.parse
 from datetime import datetime
 from Report import get_Report,update_report_status,get_unique_report,update_report_comment,update_model_accuracy,get_Report_Patient
-from resetPassword import reset_Password
+from resetPassword import reset_Password,verify_Code,update_Password
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
@@ -39,7 +39,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'liyanageisara@gmail.com'
-app.config['MAIL_PASSWORD'] = ""
+app.config['MAIL_PASSWORD'] = "tdgr obme dwta irrw"
 app.config['SECRET_KEY'] = '123'
 
 
@@ -285,6 +285,14 @@ def reset_password():
     mail = Mail(app)
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     return reset_Password(mail,s,request,db)
+
+@app.route('/verify-code', methods=['POST'])
+def verify_code():
+    return verify_Code(request,db)
+
+@app.route('/reset-password-final', methods=['POST'])
+def update_password():
+    return update_Password(request,db)
 
 
 
