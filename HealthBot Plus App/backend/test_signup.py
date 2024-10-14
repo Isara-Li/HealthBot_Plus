@@ -107,4 +107,17 @@ class SignUpTestCase(unittest.TestCase):
             self.assertIn("Failed to register user", response.get_json().get("message"))
 
 if __name__ == '__main__':
-    unittest.main()
+    result = unittest.main(exit=False)
+    tests_run = result.result.testsRun
+    errors = len(result.result.errors)
+    failures = len(result.result.failures)
+    skipped = len(result.result.skipped)
+    successes = tests_run - (errors + failures + skipped)
+
+    print("\n----------------------------------------------------------------------")
+    print(f"Total Tests: {tests_run}")
+    print(f"Success: {successes}")
+    print(f"Failures: {failures}")
+    print(f"Errors: {errors}")
+    print(f"Skipped: {skipped}")
+
