@@ -1,0 +1,38 @@
+import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClients
+import org.bson.Document
+
+// MongoDB connection URI
+def mongoUri = 'mongodb+srv://isara:isara@healthbot.p5i8q.mongodb.net/healthbot?retryWrites=true&w=majority&appName=healthbot'
+
+// Create MongoClient
+def mongoClient = MongoClients.create(mongoUri)
+
+// Access the 'healthbot' database and 'report' collection
+def database = mongoClient.getDatabase('healthbot')
+def collection = database.getCollection('report')
+
+// Define a query to find a report
+def query = new Document("user_id", "67096f4e434becc4fe97cc27") // Example query to find report by user_id
+def report = collection.find(query).first()
+
+// Check if a report was found
+if (report != null) {
+    // Log the found report to JMeter's log
+    log.info("Report found: " + report.toJson())
+    
+    // Optionally, set the response data for JMeter
+    if (prev != null) {
+        prev.setResponseData(report.toJson(), 'UTF-8')
+    }
+} else {
+    log.info("No report found for the given query")
+    
+    // Optionally, set the response data for JMeter
+    if (prev != null) {
+        prev.setResponseData("No report found", 'UTF-8')
+    }
+}
+
+// Close MongoClient connection
+mongoClient.close()

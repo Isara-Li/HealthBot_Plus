@@ -1,0 +1,38 @@
+import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClients
+import org.bson.Document
+import com.mongodb.client.model.Sorts
+
+// MongoDB connection URI
+def mongoUri = 'mongodb+srv://isara:isara@healthbot.p5i8q.mongodb.net/healthbot?retryWrites=true&w=majority&appName=healthbot'
+
+// Create MongoClient
+def mongoClient = MongoClients.create(mongoUri)
+
+// Access the 'healthbot' database and 'report' collection
+def database = mongoClient.getDatabase('healthbot')
+def collection = database.getCollection('report')
+
+// Sort by 'date' field in descending order and get the first document
+def newestReport = collection.find().sort(Sorts.descending("date")).first()
+
+// Check if a report was found
+if (newestReport != null) {
+    // Log the found report to JMeter's log
+    log.info("Newest report found: " + newestReport.toJson())
+    
+    // Optionally, set the response data for JMeter
+    if (prev != null) {
+        prev.setResponseData(newestReport.toJson(), 'UTF-8')
+    }
+} else {
+    log.info("No report found")
+    
+    // Optionally, set the response data for JMeter
+    if (prev != null) {
+        prev.setResponseData("No report found", 'UTF-8')
+    }
+}
+
+// Close MongoClient connection
+mongoClient.close()
