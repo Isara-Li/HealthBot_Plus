@@ -1,39 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import Faq from "../components/faq_card";
 
 export default function Contact() {
-    const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
+  const [faqs, setFaqs] = useState([
+    {
+      question: "What are the main symptoms for melanoma?",
+      answer:
+        "Early symptoms may include changes in the size, shape, or color of a mole. You may also experience itching, tenderness, or bleeding from the mole.",
+    },
+    {
+      question: "How can I prevent melanoma?",
+      answer:
+        "To reduce the risk of melanoma, avoid excessive sun exposure, use sunscreen, wear protective clothing, and avoid tanning beds.",
+    },
+    {
+      question: "Who is at higher risk for melanoma?",
+      answer:
+        "People with fair skin, a history of sunburns, a family history of skin cancer, or excessive UV exposure are at higher risk for melanoma.",
+    },
+    {
+      question: "What does melanoma look like?",
+      answer:
+        "Melanoma can appear as a new spot on the skin or a change in an existing mole. It may look irregular in shape or color, and it can be larger than other moles.",
+    },
+    {
+      question: "How is melanoma diagnosed?",
+      answer:
+        "Melanoma is diagnosed through a skin exam and a biopsy, where a sample of the suspicious skin area is tested for cancer cells.",
+    },
+    {
+      question: "Is melanoma curable?",
+      answer:
+        "Melanoma is highly treatable when detected early. Treatment options include surgery, immunotherapy, radiation therapy, and targeted therapies.",
+    },
+    {
+      question: "Can melanoma spread to other parts of the body?",
+      answer:
+        "Yes, melanoma can metastasize or spread to other organs, such as the lungs, liver, or brain, making early detection and treatment essential.",
+    },
+    {
+      question: "How often should I check my skin for signs of melanoma?",
+      answer:
+        "It's a good idea to check your skin monthly for any new or changing moles and visit a dermatologist annually for a full-body skin exam.",
+    },
+    {
+      question: "What is the ABCDE rule for melanoma?",
+      answer:
+        "The ABCDE rule helps identify potential melanomas: A - Asymmetry, B - Border irregularity, C - Color variations, D - Diameter larger than 6mm, E - Evolving or changing over time.",
+    },
+    {
+      question: "Can melanoma develop on areas not exposed to the sun?",
+      answer:
+        "Yes, although rare, melanoma can develop in areas not typically exposed to sunlight, such as the palms, soles of the feet, and under the nails.",
+    },
+  ]);
 
-    const handleSendClick = () => {
-        // You can add functionality to send the message, e.g., API call
-        console.log("Message sent:", message);
-        alert("Message sent!");
-        setMessage(""); // Clear the input field after sending
-    };
+  const handleSendClick = () => {
+    // You can add functionality to send the message, e.g., API call
+    console.log("Message sent:", message);
+    alert("Message sent!");
+    setMessage(""); // Clear the input field after sending
+  };
 
-    return (
-        <div>
-            <div className="flex justify-center items-center mb-8">
-                <img src={"/images/HealthBot+.PNG"} alt="Product Logo" className="w-41 h-auto align-middle" />
-            </div>
-            <div className="flex justify-center items-center">
-                <div className="w-auto p-8 border border-gray-300 rounded-lg bg-gray-50 shadow-lg">
-                    <div className="flex flex-col items-center">
-                        <h1 className="text-2xl font-semibold mb-4">Contact Us</h1>
-                        <textarea
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Enter your message here..."
-                            className="w-80 h-40 p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                            onClick={handleSendClick}
-                            className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
-                        >
-                            Send
-                        </button>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div>
+      <div className="flex justify-center items-center mb-8">
+        <img
+          src={"/images/HealthBot+.PNG"}
+          alt="Product Logo"
+          className="w-41 h-auto align-middle"
+        />
+      </div>
+      <div className="flex justify-center items-center">
+        <div className="w-auto p-8 border border-gray-300 rounded-lg bg-gray-50 shadow-lg">
+          <div className="flex flex-col items-center">
+            <h1 className="text-2xl font-semibold mb-4">Contact Us</h1>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Enter your message here..."
+              className="w-80 h-40 p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleSendClick}
+              className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
+            >
+              Send
+            </button>
+          </div>
         </div>
-    );
+      </div>
+
+      <div className="w-full flex justify-center mt-10">
+        <div className="w-[50%] flex items-center justify-center my-8">
+          <div className="flex-grow border-t-2 border-gray-300"></div>
+          <span className="mx-8 text-lg font-bold text-center text-[20px] font-open-sans-condensed">
+            FAQ
+          </span>
+          <div className="flex-grow border-t-2 border-gray-300"></div>
+        </div>
+      </div>
+
+      <div className="flex justify-center">
+        <div className="scrollbar scrollbar-thumb-slate-500 scrollbar-track-slate-300 h-[400px] w-[600px] overflow-y-scroll mb-20">
+          {faqs.map((faq, index) => (
+            <Faq key={index} question={faq.question} answer={faq.answer} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
