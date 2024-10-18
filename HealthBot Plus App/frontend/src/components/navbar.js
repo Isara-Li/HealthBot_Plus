@@ -1,6 +1,7 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavbarButton from "./navbar_button";
+import NavbarButtonPlain from "./nav_button_plain";
 import { useSelector } from "react-redux";
 
 function Navbar() {
@@ -16,11 +17,6 @@ function Navbar() {
     { label: "Melanoma Detection", href: "#" },
     { label: "Skin Diseases", href: "#" },
     { label: "ChatBot", href: "#" },
-  ];
-
-  const links_2 = [
-    { label: "Patient Stories", href: "#" },
-    { label: "Doctor Stories", href: "#" },
   ];
 
   const handleLoginSignupClick = () => {
@@ -55,9 +51,7 @@ function Navbar() {
             <NavbarButton label="Skin Health" links={links} />
           </div>
           <div className="flex-1 flex justify-center items-center bg-black">
-            <Link to="/contact">
-              <button className="px-4 py-2 bg-blue-500 text-white rounded">Contact Us</button>
-            </Link>
+            <NavbarButtonPlain label="Contact Us" link='./contact' />
           </div>
           {currentUser ? (
             <div
