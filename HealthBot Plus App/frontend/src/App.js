@@ -10,6 +10,7 @@ import Doctor from "./pages/doctor.jsx";
 import DoctorReview from "./pages/doctorReview";
 import Login from "./pages/login";
 import Diagnose from "./pages/diagnose";
+import Contact from "./pages/contact";  
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
         <Route path="/doctor/:doctorId" element={<Doctor />} />
         <Route path="/doctor-review/:reportId" element={<DoctorReview />} />
         <Route path="/diagnose" element={<Diagnose />} />
+        <Route path="/contact" element={<Contact />} />
+
       </Routes>
     </Router>
   );

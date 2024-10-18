@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import NavbarButton from "./navbar_button";
 import { useSelector } from "react-redux";
 
@@ -55,7 +55,9 @@ function Navbar() {
             <NavbarButton label="Skin Health" links={links} />
           </div>
           <div className="flex-1 flex justify-center items-center bg-black">
-            <NavbarButton label="Stories" links={links_2} />
+            <Link to="/contact">
+              <button className="px-4 py-2 bg-blue-500 text-white rounded">Contact Us</button>
+            </Link>
           </div>
           {currentUser ? (
             <div

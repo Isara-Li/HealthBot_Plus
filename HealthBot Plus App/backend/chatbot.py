@@ -10,7 +10,7 @@ headers = {"Authorization": f"Bearer {token_hugging_face}"}
 API_URL_RECOGNITION = "https://api-inference.huggingface.co/models/openai/whisper-tiny.en"
 API_URL_DIAGNOSTIC = "https://api-inference.huggingface.co/models/abhirajeshbhai/symptom-2-disease-net"
 
-openai.api_key = "sk-ZjPyGb_zTnLPx-1ko4FGy5UGDQnEBxyRoNkrqklKe5T3BlbkFJWEjSwB0_jZZ4euSpAnyY9vksNqAPc5_Zg1iKnA3cwA"
+openai.api_key = "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"
 
 
 
