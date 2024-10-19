@@ -11,7 +11,7 @@ function Faq(props) {
     <div
       onClick={toggleExpand}
       className={`bg-gray-200 m-5 rounded-xl flex flex-col items-center justify-center transition-all duration-500 cursor-pointer text-center border border-gray-800 ${
-        isExpanded ? "h-[300px]" : "h-[80px]"
+        isExpanded ? "h-[200px]" : "h-[80px]"
       }`}
     >
       <div className="text-lg font-semibold">{props.question}</div>

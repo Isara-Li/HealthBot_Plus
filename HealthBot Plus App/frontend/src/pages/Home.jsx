@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux"; // Redux imports
+import Footer from "../components/footer";
 
 const Counter = ({ end }) => {
   const [count, setCount] = useState(0);
@@ -129,7 +130,6 @@ const SkinVisionPage = () => {
                 Log in to Try HealthBot
               </button>
             )}
-
           </div>
 
           <div className="max-w-md">
@@ -180,8 +180,9 @@ const SkinVisionPage = () => {
 
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
-          }`}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${
+          chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+        }`}
       >
         {chatClicked ? (
           <div className="flex flex-col items-start justify-center">
@@ -203,6 +204,7 @@ const SkinVisionPage = () => {
           </>
         )}
       </div>
+      <Footer />
     </motion.div>
   );
 };
