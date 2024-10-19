@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import "../tailwind.css";
 import { useSelector } from 'react-redux'
 import { useDispatch } from "react-redux";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const Report = () => {
   const { reportId } = useParams(); // Extract reportId from the URL
@@ -12,6 +13,7 @@ const Report = () => {
   const [comment, setComment] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const { currentUser } = useSelector(state => state.user);
+  const [showButton, setShowButton] = useState(false);
 
 
   useEffect(() => {
@@ -39,6 +41,26 @@ const Report = () => {
 
     fetchReportDetails();
   }, [reportId]);
+
+  useEffect(() => {
+    // Show the back-to-top button only when the user scrolls down
+    const handleScroll = () => {
+      if (window.pageYOffset > 300) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   // Function to handle posting the updated doctor's comment
   const handlePostComment = async () => {
@@ -280,6 +302,14 @@ const Report = () => {
           <strong>Doctor's Comments:</strong> {report.doctor_comment}
         </p>}
       </div>
+      {showButton && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-800 transition-all w-12 h-12 flex justify-center items-center"
+        >
+          <KeyboardArrowUpIcon />
+        </button>
+      )}
 
     </motion.div>
   );

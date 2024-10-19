@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Faq from "../components/faq_card";
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 
 export default function Contact() {
   const [message, setMessage] = useState("");
@@ -57,10 +58,16 @@ export default function Contact() {
   ]);
 
   const handleSendClick = () => {
-    // You can add functionality to send the message, e.g., API call
-    console.log("Message sent:", message);
-    alert("Message sent!");
-    setMessage(""); // Clear the input field after sending
+    // Construct the mailto link with recipient and message
+    const mailtoLink = `mailto:healthbot@gmail.com?subject=Contact%20Message&body=${encodeURIComponent(
+      message
+    )}`;
+
+    // Open the user's default mail app
+    window.location.href = mailtoLink;
+
+    // Clear the input field after opening the mail app
+    setMessage("");
   };
 
   return (
@@ -75,7 +82,12 @@ export default function Contact() {
       <div className="flex justify-center items-center">
         <div className="w-auto p-8 border border-gray-300 rounded-lg bg-gray-50 shadow-lg">
           <div className="flex flex-col items-center">
-            <h1 className="text-2xl font-semibold mb-4">Contact Us</h1>
+            <div className="flex items-center mb-4 px-4">
+              <ContactMailIcon className="mr-4" />  {/* Added margin-right */}
+              <h1 className="text-2xl font-semibold">Contact Us</h1>
+            </div>
+
+
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -103,7 +115,7 @@ export default function Contact() {
       </div>
 
       <div className="flex justify-center">
-        <div className="scrollbar scrollbar-thumb-slate-500 scrollbar-track-slate-300 h-[400px] w-[600px] overflow-y-scroll mb-20">
+        <div className="scrollbar-hide h-[400px] w-[600px] overflow-y-scroll mb-20">
           {faqs.map((faq, index) => (
             <Faq key={index} question={faq.question} answer={faq.answer} />
           ))}

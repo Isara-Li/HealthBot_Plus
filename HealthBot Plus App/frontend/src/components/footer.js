@@ -10,10 +10,9 @@ function Footer() {
         <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">
           <h1 className="pl-10 ">COMPANY NAME</h1>
           <p className=" text-justify mt-4 pl-10 text-[17px]">
-            HealthBot plus envisions revolutionizing healthcare with AI,
+            HealthBot+ envisions revolutionizing healthcare with AI,
             providing accessible, early disease detection and personalized
-            treatment insights to improve patient outcomes and promote proactive
-            health management globally.
+            treatment insights.
           </p>
         </div>
         <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">

@@ -51,7 +51,7 @@ function Navbar() {
             <NavbarButton label="Skin Health" links={links} />
           </div>
           <div className="flex-1 flex justify-center items-center bg-black">
-            <NavbarButtonPlain label="Contact Us" link='./contact' />
+            <NavbarButtonPlain label="Contact Us" link='/contact' />
           </div>
           {currentUser ? (
             <div
