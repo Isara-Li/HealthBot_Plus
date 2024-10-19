@@ -159,7 +159,9 @@ def create_mel_report(user_id,user_name,user_email, doctor_id, melanoma_probabil
         'user_profile': user_profile,
         'doctor_comment': "None",
         'user_email': user_email,
-        'is_melanoma': "Yes"
+        'is_melanoma': "Yes",
+        'review_date': "N/A",
+        
 
     }
 
@@ -222,7 +224,8 @@ def create_dis_report(user_id,user_name, user_email,doctor_id,  disease_class,di
         'user_profile': user_profile,
         'doctor_comment': "None",
         'user_email': user_email,
-        'is_melanoma': "No"
+        'is_melanoma': "No",
+        'review_date': "N/A",
 
     }
 

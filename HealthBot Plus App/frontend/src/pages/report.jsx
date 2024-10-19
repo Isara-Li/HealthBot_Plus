@@ -135,7 +135,7 @@ const Report = () => {
           <strong>Status:</strong> {report.status}
         </p>
         <p className="text-lg mb-4">
-          <strong>Reviewed On:</strong> {report.reviewedOn || "N/A"}
+          <strong>Reviewed On:</strong> {report.review_date || "N/A"}
         </p>
       </div>
 

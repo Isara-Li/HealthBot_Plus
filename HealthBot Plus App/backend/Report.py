@@ -32,6 +32,7 @@ def update_report_status(request,db):
     data = request.get_json()
     report_id = data.get("reportId")
     new_status = data.get("status")
+    date = data.get("review_date")
 
     if not report_id or not new_status:
         return jsonify({"error": "Missing parameters"}), 400
@@ -42,7 +43,9 @@ def update_report_status(request,db):
         # Update the report status
     result = report_collection.update_one(
         {"_id": object_id},  # Use the ObjectId here
-        {"$set": {"status": new_status}}
+        {"$set": {"status": new_status
+                  ,"review_date": date}
+         }
     )
 
     if result.matched_count > 0:
