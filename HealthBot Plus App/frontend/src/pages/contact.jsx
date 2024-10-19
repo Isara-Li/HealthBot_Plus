@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Faq from "../components/faq_card";
 import ContactMailIcon from '@mui/icons-material/ContactMail';
+import Footer from "../components/footer";
 
 export default function Contact() {
   const [message, setMessage] = useState("");
@@ -121,6 +122,7 @@ export default function Contact() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

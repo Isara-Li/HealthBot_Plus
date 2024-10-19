@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
+import Footer from "../components/footer";
 
 import { deleteUserSuccess } from "../redux/user/userSlice";
 
@@ -279,6 +280,7 @@ const Doctor = ({ productLogo }) => {
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

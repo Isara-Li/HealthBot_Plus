@@ -20,6 +20,7 @@ import { app } from "../firebase";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
+import Footer from "../components/footer";
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
@@ -355,9 +356,8 @@ const Patient = () => {
               {reports.map((report) => (
                 <tr
                   key={report._id.$oid}
-                  className={`doctor-table-row ${
-                    report.status === "Reviewed" ? "bg-green-100" : ""
-                  } `}
+                  className={`doctor-table-row ${report.status === "Reviewed" ? "bg-green-100" : ""
+                    } `}
                 >
                   <td className="doctor-table-td p-3 text-sm text-gray-700">
                     {report._id.$oid}
@@ -390,9 +390,8 @@ const Patient = () => {
       </div>
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${
-          chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
-        }`}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
       >
         {chatClicked ? (
           <div className="flex flex-col items-start justify-center">
@@ -414,6 +413,7 @@ const Patient = () => {
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

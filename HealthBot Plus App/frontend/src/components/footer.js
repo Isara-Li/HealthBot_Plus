@@ -8,7 +8,7 @@ function Footer() {
     <div className="w-full h-96 mt-32">
       <div className="bg-slate-500 h-80 w-full opacity-90 grid grid-cols-4 text-[17px]">
         <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">
-          <h1 className="pl-10 ">COMPANY NAME</h1>
+        
           <p className=" text-justify mt-4 pl-10 text-[17px]">
             HealthBot+ envisions revolutionizing healthcare with AI,
             providing accessible, early disease detection and personalized
@@ -57,7 +57,7 @@ function Footer() {
               <div className="flex justify-center items-center">
                 <CiMail size={22} />
               </div>
-              <p>info@gmail.com</p>
+              <p>healthbot@gmail.com</p>
             </div>
             <div className="flex gap-3">
               <div className="flex justify-center items-center">

@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EmergencyIcon from '@mui/icons-material/Emergency';
 
+
 const Report = () => {
   const { reportId } = useParams(); // Extract reportId from the URL
   const [report, setReport] = useState(null);
