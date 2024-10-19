@@ -5,6 +5,7 @@ import "../tailwind.css";
 import { useSelector } from 'react-redux'
 import { useDispatch } from "react-redux";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import EmergencyIcon from '@mui/icons-material/Emergency';
 
 const Report = () => {
   const { reportId } = useParams(); // Extract reportId from the URL
@@ -118,8 +119,9 @@ const Report = () => {
       <div className="flex justify-center items-center mb-8">
         <img src={"/images/HealthBot+.PNG"} alt="Product Logo" className="w-41 h-auto align-middle" />
       </div>
-      <div className="flex justify-center">
-        <h1 className="text-4xl font-semibold text-center text-gray-800 rounded-lg mb-6 bg-gray-100 p-4 border border-gray-300 inline-block">
+      <div className="flex justify-center mb-4 px-4 flex-col">
+        <h1 className="text-4xl font-semibold text-center text-gray-800 rounded-lg mb-6 bg-gray-100 p-4 border border-gray-300 inline-block flex items-center justify-center">
+          <EmergencyIcon className="text-red-500 text-6xl mr-4" />
           Medical Report
         </h1>
       </div>
