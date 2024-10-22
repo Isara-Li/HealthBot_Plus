@@ -71,7 +71,7 @@ const Patient = () => {
   const fetchReportHistory = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/getreportsforpatient",
+        "https://essential-carin-isara-373532ad.koyeb.app/getreportsforpatient",
         {
           method: "POST",
           headers: {
@@ -160,7 +160,7 @@ const Patient = () => {
     };
     console.log(updatedData);
     try {
-      const response = await fetch("http://localhost:5000/update", {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

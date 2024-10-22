@@ -121,7 +121,7 @@ const Signup = () => {
     if (validateStep2()) {
       // Sending data to the backend using fetch API
       try {
-        const response = await fetch("http://localhost:5000/signup", {
+        const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

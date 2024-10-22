@@ -15,7 +15,7 @@ export default function OAuth() {
 
             const result = await signInWithPopup(auth, provider)
 
-            const response = await fetch("http://localhost:5000/googlelogin", {
+            const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/googlelogin", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: result.user.email, photoURL: result.user.photoURL })

@@ -20,6 +20,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv(override=True)
 
@@ -32,7 +33,9 @@ mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 
 
-cred = credentials.Certificate(os.getenv("CRED"))
+cred_json = os.getenv("CRED")
+cred_dict = json.loads(cred_json)
+cred = credentials.Certificate(cred_dict)
 firebase_admin.initialize_app(cred, {
     'storageBucket': 'healthbotplus.appspot.com' 
 })

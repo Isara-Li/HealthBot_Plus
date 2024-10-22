@@ -29,7 +29,7 @@ const Login = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/login", {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -67,7 +67,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/reset-password", {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -92,7 +92,7 @@ const Login = () => {
   // Handler for verifying the code
   const handleVerifyCode = async () => {
     try {
-      const response = await fetch("http://localhost:5000/verify-code", {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/verify-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -123,7 +123,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/reset-password-final", {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/reset-password-final", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

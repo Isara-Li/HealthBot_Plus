@@ -56,7 +56,7 @@ const Doctor = ({ productLogo }) => {
 
   const fetchReportHistory = async () => {
     try {
-      const response = await fetch("http://localhost:5000/getreports", {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/getreports", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +80,7 @@ const Doctor = ({ productLogo }) => {
   // Function to update report status to 'Reviewed'
   const updateReportStatus = async (reportId) => {
     try {
-      const response = await fetch(`http://localhost:5000/updatereportstatus`, {
+      const response = await fetch(`https://essential-carin-isara-373532ad.koyeb.app/updatereportstatus`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -21,7 +21,7 @@ const Report = () => {
   useEffect(() => {
     const fetchReportDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/getreport/${reportId}`, {
+        const response = await fetch(`https://essential-carin-isara-373532ad.koyeb.app/getreport/${reportId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const Report = () => {
   // Function to handle posting the updated doctor's comment
   const handlePostComment = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/updatereport/${report._id}`, {
+      const response = await fetch(`https://essential-carin-isara-373532ad.koyeb.app/updatereport/${report._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const Report = () => {
 
   const handlePrediction = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/updatereportaccuracy/${report._id}`, {
+      const response = await fetch(`https://essential-carin-isara-373532ad.koyeb.app/updatereportaccuracy/${report._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

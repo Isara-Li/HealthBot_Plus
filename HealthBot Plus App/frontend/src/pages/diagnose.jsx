@@ -49,7 +49,7 @@ export default function Diagnose() {
     useEffect(() => {
         const fetchDoctorDetails = async () => {
             try {
-                const response = await fetch('http://localhost:5000/getdoctor', {
+                const response = await fetch('https://essential-carin-isara-373532ad.koyeb.app/getdoctor', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ export default function Diagnose() {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/predict', {
+            const response = await fetch('https://essential-carin-isara-373532ad.koyeb.app/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
