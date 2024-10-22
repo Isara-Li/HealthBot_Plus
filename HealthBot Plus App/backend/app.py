@@ -18,29 +18,33 @@ from Report import get_Report,update_report_status,get_unique_report,update_repo
 from resetPassword import reset_Password,verify_Code,update_Password
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from dotenv import load_dotenv
+import os
+
+load_dotenv(override=True)
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 
-mongo_uri = 'mongodb+srv://isara:isara@healthbot.p5i8q.mongodb.net/healthbot?retryWrites=true&w=majority&appName=healthbot'
+mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 
 
-cred = credentials.Certificate(r"C:\Users\Isara Liyanage\Desktop\healthbotplus-firebase-adminsdk-ysm0p-be95ee6fe0.json")
+cred = credentials.Certificate(os.getenv("CRED"))
 firebase_admin.initialize_app(cred, {
     'storageBucket': 'healthbotplus.appspot.com' 
 })
 
 db = client['healthbot'] 
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'liyanageisara@gmail.com'
-app.config['MAIL_PASSWORD'] = "tdgr obme dwta irrw"
-app.config['SECRET_KEY'] = '123'
+app.config['MAIL_SERVER'] = os.getenv("MAIL_SERVER")
+app.config['MAIL_PORT'] = os.getenv("MAIL_PORT")
+app.config['MAIL_USE_TLS'] = os.getenv("MAIL_USE_TLS")
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 
 def upload_to_firebase(local_file_path, filename):
@@ -67,8 +71,9 @@ def predict():
         user_name = data['user_name']
         user_email = data['user_email']
 
-        
-        client = Client("Yasiru2002/Melanoma_Model")
+        melanoma_model_link = os.getenv("MELANOMA_LINK")
+        five_diseases_model_link = os.getenv("DISEASES_LINK")
+        client = Client(melanoma_model_link)
         result = client.predict(
                 image=handle_file(image),
                 sex=sex,
@@ -94,7 +99,7 @@ def predict():
 
     else:
         try:
-            client = Client("Yasiru2002/five_diseases_model")
+            client = Client(five_diseases_model_link)
             result = client.predict(
             image=handle_file(image),
             api_name="/predict"

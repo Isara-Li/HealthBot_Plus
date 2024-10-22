@@ -3,14 +3,17 @@ import requests
 import json
 from flask import jsonify
 import os
+from dotenv import load_dotenv
 
-token_hugging_face = "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"
+load_dotenv(override=True)
+
+token_hugging_face = os.getenv("HUGGINGFACE_TOKEN")
 
 headers = {"Authorization": f"Bearer {token_hugging_face}"}
-API_URL_RECOGNITION = "https://api-inference.huggingface.co/models/openai/whisper-tiny.en"
-API_URL_DIAGNOSTIC = "https://api-inference.huggingface.co/models/abhirajeshbhai/symptom-2-disease-net"
+API_URL_RECOGNITION = os.getenv("API_URL_RECOGNITION")
+API_URL_DIAGNOSTIC = os.getenv("API_URL_DIAGNOSTIC")
 
-openai.api_key = "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"
+openai.api_key =  os.getenv("OPENAI_API_KEY")
 
 
 
