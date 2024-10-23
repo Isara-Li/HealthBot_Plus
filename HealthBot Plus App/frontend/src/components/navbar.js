@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarButtonPlain from "./nav_button_plain"; // Reuse the plain button component
+import NavbarButtonPlain from "./nav_button_plain"; 
 import { useSelector } from "react-redux";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user); // get the user from the redux store
+  const { currentUser } = useSelector((state) => state.user); 
 
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
@@ -17,7 +17,7 @@ function Navbar() {
   };
 
   const handleLogoClick = () => {
-    navigate("/"); // Redirect to the home page
+    navigate("/"); 
   };
 
   return (
@@ -27,7 +27,7 @@ function Navbar() {
           src={"../images/HealthBot+.PNG"}
           alt="Logo"
           className="h-5/6 cursor-pointer"
-          onClick={handleLogoClick} // Add onClick to redirect to home page
+          onClick={handleLogoClick} 
         />
       </div>
       <div className="w-3/4 flex justify-center items-center">
