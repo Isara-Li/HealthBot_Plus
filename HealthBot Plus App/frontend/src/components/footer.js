@@ -1,104 +1,101 @@
 import { AiOutlineHome } from "react-icons/ai";
 import { CiMail } from "react-icons/ci";
-import { FiPhone } from "react-icons/fi";
-import { FiPhoneCall } from "react-icons/fi";
+import { FiPhone, FiPhoneCall } from "react-icons/fi";
 
 function Footer() {
   return (
-    <div className="w-full h-96 mt-32">
-      <div className="bg-slate-500 h-80 w-full opacity-90 grid grid-cols-4 text-[17px]">
-        <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">
-        
-          <p className=" text-justify mt-4 pl-10 text-[17px]">
-            HealthBot+ envisions revolutionizing healthcare with AI,
-            providing accessible, early disease detection and personalized
-            treatment insights.
+    <div className="w-full mt-32">
+      <div className="bg-gray-900 text-gray-300 py-10 px-5 md:px-20 grid grid-cols-1 md:grid-cols-4 gap-10">
+        {/* About Section */}
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-white mb-4">About HealthBot+</h2>
+          <p className="text-justify text-sm">
+            HealthBot+ is dedicated to transforming healthcare by harnessing the power of AI, offering accessible and accurate early disease detection, while delivering personalized treatment insights tailored to each patient. Our vision is to make healthcare more efficient and proactive for everyone.
           </p>
         </div>
-        <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">
-          <h1 className="pl-10 text-[17px]">HELPFUL LINKS</h1>
-          <div className="mt-4 pl-10 flex flex-col">
+
+        {/* Helpful Links Section */}
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-white mb-4">Helpful Links</h2>
+          <div className="flex flex-col space-y-2 text-sm">
             <a
               href="https://www.mayoclinic.org/diseases-conditions/melanoma/symptoms-causes/syc-20374884"
-              className="hover:text-blue-300 mb-4"
+              className="hover:text-blue-400"
             >
               About melanoma
             </a>
             <a
               href="https://my.clevelandclinic.org/health/diseases/21573-skin-diseases"
-              className="hover:text-blue-300 mb-4"
+              className="hover:text-blue-400"
             >
               Skin diseases
             </a>
             <a
               href="https://www.medicalnewstoday.com/articles/249141#types"
-              className="hover:text-blue-300 mb-4"
+              className="hover:text-blue-400"
             >
               Benign vs Malignant
             </a>
             <a
               href="https://www.dhs.wisconsin.gov/skin-infection/prevention-disinfection.htm"
-              className="hover:text-blue-300 mb-4"
+              className="hover:text-blue-400"
             >
               Skin disease prevention
             </a>
           </div>
         </div>
-        <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">
-          <h1 className="pl-10 text-[17px]">CONTACT</h1>
-          <div className="mt-4 pl-10 flex flex-col gap-5">
-            <div className="flex gap-3">
-              <div className="flex justify-center items-center">
-                <AiOutlineHome size={22} />
-              </div>
+
+        {/* Contact Section */}
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-white mb-4">Contact Us</h2>
+          <div className="space-y-4 text-sm">
+            <div className="flex items-center gap-3">
+              <AiOutlineHome size={20} />
               <p>Colombo 07, Sri Lanka</p>
             </div>
-            <div className="flex gap-3">
-              <div className="flex justify-center items-center">
-                <CiMail size={22} />
-              </div>
+            <div className="flex items-center gap-3">
+              <CiMail size={20} />
               <p>healthbot@gmail.com</p>
             </div>
-            <div className="flex gap-3">
-              <div className="flex justify-center items-center">
-                <FiPhone size={22} />
-              </div>
+            <div className="flex items-center gap-3">
+              <FiPhone size={20} />
               <p>+01 234 567 88</p>
             </div>
-            <div className="flex gap-3">
-              <div className="flex justify-center items-center">
-                <FiPhoneCall size={22} />
-              </div>
+            <div className="flex items-center gap-3">
+              <FiPhoneCall size={20} />
               <p>+01 234 567 89</p>
             </div>
           </div>
         </div>
-        <div className="flex flex-col pt-10 w-4/5 text-white text-opacity-90">
-          <h1 className="pl-10 text-[17px]">FOLLOW US</h1>
-          <div className="mt-4 pl-10 grid grid-cols-2 w-40 gap-5">
-            <a href="" className="w-9 hover:cursor-pointer">
-              <img src="/images/facebook.png" />
+
+        {/* Follow Us Section */}
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-white mb-4">Follow Us</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <a href="#" className="w-9 hover:scale-110 transition-transform">
+              <img src="/images/facebook.png" alt="Facebook" />
             </a>
-            <a href="" className="w-9  hover:cursor-pointer">
-              <img src="/images/twitter.png" />
+            <a href="#" className="w-9 hover:scale-110 transition-transform">
+              <img src="/images/twitter.png" alt="Twitter" />
             </a>
-            <a href="" className="w-9  hover:cursor-pointer">
-              <img src="/images/google.png" />
+            <a href="#" className="w-9 hover:scale-110 transition-transform">
+              <img src="/images/google.png" alt="Google" />
             </a>
-            <a href="" className="w-9  hover:cursor-pointer">
-              <img src="/images/instagram.png" />
+            <a href="#" className="w-9 hover:scale-110 transition-transform">
+              <img src="/images/instagram.png" alt="Instagram" />
             </a>
-            <a href="" className="w-9  hover:cursor-pointer">
-              <img src="/images/linkedin.png" />
+            <a href="#" className="w-9 hover:scale-110 transition-transform">
+              <img src="/images/linkedin.png" alt="LinkedIn" />
             </a>
-            <a href="" className="w-9  hover:cursor-pointer">
-              <img src="/images/github.png" />
+            <a href="#" className="w-9 hover:scale-110 transition-transform">
+              <img src="/images/github.png" alt="GitHub" />
             </a>
           </div>
         </div>
       </div>
-      <div className="h-16 w-full bg-slate-600 opacity-85 text-white text-opacity-80 flex justify-center items-center">
-        <p>© 2024 Copyright: HealthBot+</p>
+
+      <div className="bg-gray-800 py-4 text-center text-gray-400 text-sm">
+        <p>© 2024 HealthBot+. All rights reserved.</p>
       </div>
     </div>
   );
