@@ -13,6 +13,7 @@ import Diagnose from "./pages/diagnose";
 import Contact from "./pages/contact";  
 import DoctorOverview from "./pages/doctor_overview";
 import PatientStories from "./pages/patient_stories";
+import GettingStarted from "./pages/gettingStarted.jsx";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/doctor_overview" element={<DoctorOverview />} />
         <Route path="/patient_stories" element={<PatientStories />} />
+        <Route path="/getting_started" element={<GettingStarted />} />
 
       </Routes>
     </Router>

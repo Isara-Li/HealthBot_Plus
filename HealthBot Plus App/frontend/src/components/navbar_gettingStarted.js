@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import NavbarButtonPlain from "./nav_button_plain"; 
 import { useSelector } from "react-redux";
 
-function NavbarContactUs() {
+function NavbarGettingStarted() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user); 
   const handleLoginSignupClick = () => {
@@ -20,9 +20,9 @@ function NavbarContactUs() {
   };
 
   const isActive = (page) =>
-    page === "contact"
-      ? "border-b-4 border-blue-600 text-blue-600 px-4 py-2"
-      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:text-blue-600 active:text-blue-600";
+    page === "getting_started"
+      ? "bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg"
+      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:bg-blue-600 focus:text-white active:bg-blue-600 active:text-white";
 
   return (
     <div className="bg-white border-b border-slate-200 h-18 font-sans z-[999] shadow-md">
@@ -90,4 +90,4 @@ function NavbarContactUs() {
   );
 }
 
-export default NavbarContactUs;
+export default NavbarGettingStarted;
