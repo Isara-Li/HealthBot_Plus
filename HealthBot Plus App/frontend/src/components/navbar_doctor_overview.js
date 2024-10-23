@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 
 function Navbar({ activePage }) {
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user); 
+  const { currentUser } = useSelector((state) => state.user);
+  
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
   };
@@ -19,11 +20,10 @@ function Navbar({ activePage }) {
     navigate("/"); 
   };
 
-  
   const isActive = (page) =>
     activePage === page
-      ? "bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg"
-      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:bg-blue-600 focus:text-white active:bg-blue-600 active:text-white";
+      ? "border-b-4 border-blue-600 text-blue-600 px-4 py-2"
+      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:text-blue-600 active:text-blue-600";
 
   return (
     <div className="bg-white border-b border-slate-200 h-18 font-sans z-[999] shadow-md">

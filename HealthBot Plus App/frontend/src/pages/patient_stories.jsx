@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaQuoteLeft, FaRegCommentDots } from 'react-icons/fa'; 
 import NavbarPatientStories from '../components/navbar_patient_stories'; 
+import Footer from "../components/footer";
 
 
 const patients = [
@@ -97,6 +98,7 @@ function PatientStories() {
           ))}
         </div>
       </div>
+      <Footer /> 
     </div>
   );
 }
