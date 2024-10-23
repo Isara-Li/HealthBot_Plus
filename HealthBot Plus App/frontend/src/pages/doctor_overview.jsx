@@ -2,6 +2,7 @@ import React from 'react';
 import { FaEnvelope, FaUser, FaUniversity, FaBriefcase, FaHospitalAlt, FaIdBadge, FaStickyNote, FaClipboardCheck, FaCheck } from 'react-icons/fa'; // Import FaCheck for tick marks
 import { useSelector } from 'react-redux';
 import Navbar from "../components/navbar_doctor_overview"; 
+import Footer from "../components/footer";
 
 function DoctorOverview() {
   const { currentUser } = useSelector((state) => state.user);
@@ -119,6 +120,7 @@ function DoctorOverview() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
