@@ -1,28 +1,32 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarButtonPlain from "./nav_button_plain"; 
+import NavbarButtonPlain from "./nav_button_plain";
 import { useSelector } from "react-redux";
 
 function NavbarGettingStarted() {
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user); 
+  const { currentUser } = useSelector((state) => state.user);
+
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
   };
 
   const handleProfile = () => {
-    if (currentUser.is_patient) navigate(`/patient/${currentUser._id}`);
-    else navigate(`/doctor/${currentUser._id}`);
+    if (currentUser.is_patient) {
+      navigate(`/patient/${currentUser._id}`);
+    } else {
+      navigate(`/doctor/${currentUser._id}`);
+    }
   };
 
   const handleLogoClick = () => {
-    navigate("/"); 
+    navigate("/");
   };
 
   const isActive = (page) =>
     page === "getting_started"
-      ? "bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg"
-      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:bg-blue-600 focus:text-white active:bg-blue-600 active:text-white";
+      ? "border-b-4 border-blue-600 text-blue-600 px-4 py-2"
+      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:text-blue-600 active:text-blue-600";
 
   return (
     <div className="bg-white border-b border-slate-200 h-18 font-sans z-[999] shadow-md">
@@ -80,8 +84,19 @@ function NavbarGettingStarted() {
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button className="text-gray-500 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
             </svg>
           </button>
         </div>

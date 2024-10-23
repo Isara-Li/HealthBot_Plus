@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaEnvelope, FaUser, FaUniversity, FaBriefcase, FaHospitalAlt, FaIdBadge, FaStickyNote, FaClipboardCheck, FaCheck } from 'react-icons/fa'; // Import FaCheck for tick marks
+import { FaEnvelope, FaUser, FaUniversity, FaBriefcase, FaHospitalAlt, FaIdBadge, FaStickyNote, FaClipboardCheck, FaCheck } from 'react-icons/fa'; // Import icons
 import { useSelector } from 'react-redux';
-import Navbar from "../components/navbar_doctor_overview"; 
-import Footer from "../components/footer";
+import Navbar from "../components/navbar_doctor_overview"; // Import Navbar
+import Footer from "../components/footer"; // Import Footer
 
 function DoctorOverview() {
   const { currentUser } = useSelector((state) => state.user);
@@ -12,6 +12,7 @@ function DoctorOverview() {
     email: 'doctor@gmail.com',
     age: 51,
     country: 'Sri Lanka',
+    profile: 'https://static.vecteezy.com/system/resources/previews/001/511/502/non_2x/male-doctor-icon-free-vector.jpg', // Fixed doctor profile image
     specializations: ['Dermatology', 'Melanoma Treatment', 'Cosmetic Dermatology'],
     qualifications: ['MBBS (University of Colombo)', 'MD in Dermatology (University of Colombo)', 'Fellowship in Skin Cancer Treatment (Australia)'],
     experience: '25 years of experience in treating skin diseases, with a special focus on skin cancer and cosmetic dermatology.',
@@ -24,11 +25,12 @@ function DoctorOverview() {
     <div>
       <Navbar activePage="doctor_overview" /> {/* Pass the activePage prop */}
       <div className="container mx-auto p-8 bg-white shadow-lg rounded-lg mt-6">
+        
         {/* Doctor Profile Image */}
         <div className="text-center mb-8">
           <img
-            src={currentUser?.profile || 'https://via.placeholder.com/150'}
-            alt="Profile"
+            src={doctorInfo.profile} // Always use the correct doctor's profile image
+            alt="Doctor Profile"
             className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
           />
         </div>
@@ -120,6 +122,8 @@ function DoctorOverview() {
           </div>
         </div>
       </div>
+
+      
       <Footer />
     </div>
   );
