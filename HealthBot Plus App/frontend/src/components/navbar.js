@@ -1,23 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarButton from "./navbar_button";
-import NavbarButtonPlain from "./nav_button_plain";
+import NavbarButtonPlain from "./nav_button_plain"; // Reuse the plain button component
 import { useSelector } from "react-redux";
 
 function Navbar() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user); // get the user from the redux store
-
-  const links_1 = [
-    { label: "About", href: "#" },
-    { label: "Medical Awards", href: "#" },
-  ];
-
-  const links = [
-    { label: "Melanoma Detection", href: "#" },
-    { label: "Skin Diseases", href: "#" },
-    { label: "ChatBot", href: "#" },
-  ];
 
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
@@ -42,17 +30,25 @@ function Navbar() {
           onClick={handleLogoClick} // Add onClick to redirect to home page
         />
       </div>
-      <div className="w-3/4 flex justify-center">
-        <div className="w-4/5 h-full flex">
-          <div className="flex-1 flex justify-center items-center bg-black">
-            <NavbarButton label="Getting Started" links={links_1} />
+      <div className="w-3/4 flex justify-center items-center">
+        <div className="w-full h-full flex justify-between">
+          {/* Getting Started Button without dropdown */}
+          <div className="flex-1 flex justify-center items-center">
+            <NavbarButtonPlain label="Getting Started" link="/getting_started" />
           </div>
-          <div className="flex-1 flex justify-center items-center bg-black">
-            <NavbarButton label="Skin Health" links={links} />
+          {/* Doctor Overview Button */}
+          <div className="flex-1 flex justify-center items-center">
+            <NavbarButtonPlain label="Doctor Overview" link="/doctor_overview" />
           </div>
-          <div className="flex-1 flex justify-center items-center bg-black">
-            <NavbarButtonPlain label="Contact Us" link='/contact' />
+          {/* Patient Stories Button */}
+          <div className="flex-1 flex justify-center items-center">
+            <NavbarButtonPlain label="Patient Stories" link="/patient_stories" />
           </div>
+          {/* Contact Us Button */}
+          <div className="flex-1 flex justify-center items-center">
+            <NavbarButtonPlain label="About Us" link="/contact" />
+          </div>
+          {/* Profile or Login / Signup */}
           {currentUser ? (
             <div
               className="flex-1 flex justify-center items-center hover:bg-slate-200 rounded-xl cursor-pointer"
@@ -67,7 +63,7 @@ function Navbar() {
             </div>
           ) : (
             <div
-              className="flex-1 hover:bg-slate-200 transform transition duration-400 flex justify-center items-center font-semibold cursor-pointer rounded-xl"
+              className="flex-1 flex justify-center items-center hover:bg-slate-200 font-semibold cursor-pointer rounded-xl"
               onClick={handleLoginSignupClick}
             >
               Login / SignUp
