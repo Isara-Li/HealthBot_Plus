@@ -6,7 +6,28 @@ import Footer from "../components/footer";
 export default function GettingStarted() {
   return (
     <div>
-      <NavbarGettingStarted /> {/* Custom Navbar */}
+      <NavbarGettingStarted /> 
+
+      {/* Video Section*/}
+      <section className="bg-gray-100 py-10">
+        <div className="container mx-auto text-center">
+          <h2 className="text-4xl font-bold text-blue-600 mb-6">Watch a Demo of HealthBot+</h2>
+          <div className="mt-8 flex justify-center">
+            <div className="shadow-lg rounded-lg overflow-hidden">
+              <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/GAosly8RCoQ?si=gACGEXRu5DayvXXJ"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Introduction Section */}
       <section className="bg-gray-100 py-10">
@@ -110,9 +131,6 @@ export default function GettingStarted() {
             </div>
           </div>
 
-
-
-
           {/* Step 3 */}
           <div className="relative flex items-center">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
@@ -176,8 +194,7 @@ export default function GettingStarted() {
                 <FaGoogle className="text-red-500 text-5xl mb-4" />
                 <h2 className="text-2xl font-semibold text-gray-800 mb-2">Step 3.2: Google Authentication</h2>
                 <p className="text-gray-600">
-                Alternatively, you can <strong>seamlessly log in</strong> using <strong>Google Authentication</strong> by clicking the <strong>Continue with Google</strong> button for a fast and secure login experience.
-
+                  Alternatively, you can <strong>seamlessly log in</strong> using <strong>Google Authentication</strong> by clicking the <strong>Continue with Google</strong> button for a fast and secure login experience.
                 </p>
               </div>
             </div>
@@ -218,6 +235,7 @@ export default function GettingStarted() {
           </p>
         </div>
       </section>
+      
       <Footer />
     </div>
   );
