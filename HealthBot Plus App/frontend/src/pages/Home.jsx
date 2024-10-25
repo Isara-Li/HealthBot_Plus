@@ -5,11 +5,14 @@ import { FaRocketchat } from "react-icons/fa";
 import { motion } from "framer-motion";
 import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux"; // Redux imports
+import Footer from "../components/footer";
 
 const Counter = ({ end }) => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
+  const currentUser = useSelector((state) => state.user?.currentUser || null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -32,7 +35,7 @@ const Counter = ({ end }) => {
       }
     };
   }, []);
-
+  console.log(currentUser);
   useEffect(() => {
     if (isVisible) {
       let start = 0;
@@ -63,8 +66,8 @@ const Counter = ({ end }) => {
 const SkinVisionPage = () => {
   const [chatClicked, setChatClicked] = useState(false);
   const [showRecorder, setShowRecorder] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
-
+  const { currentUser } = useSelector((state) => state.user || {});
+  const navigate = useNavigate();
   useEffect(() => {
     let timer;
     if (chatClicked) {
@@ -107,14 +110,28 @@ const SkinVisionPage = () => {
             <h1 className="text-6xl font-bold my-4 space-x-4">
               Are your moles getting under your skin?
             </h1>
-            <button
-              onClick={handleTrySkinVisionClick} // Handle the button click
-              className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
-            >
-              Try SkinVision
-            </button>
+
+            {currentUser ? (
+              currentUser.is_patient == true ? (
+                <button
+                  onClick={handleTrySkinVisionClick} // Handle the button click
+                  className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
+                >
+                  Try HealthBot
+                </button>
+              ) : (
+                <div></div>
+              )
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-blue-500 text-gray-800 font-bold py-2 px-4 rounded-full mt-4"
+              >
+                Log in to Try HealthBot
+              </button>
+            )}
           </div>
-          {/* Right Image Content */}
+
           <div className="max-w-md">
             <img
               src="https://www.verywellhealth.com/thmb/qq1afE3eNsGV8bVy29-Zi_oqrAE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/VWH-JoshSeong-SkingScreening-Recirc-512cda1d7c674b969a03a36c20d7d178.jpg"
@@ -163,8 +180,9 @@ const SkinVisionPage = () => {
 
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
-          }`}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${
+          chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+        }`}
       >
         {chatClicked ? (
           <div className="flex flex-col items-start justify-center">
@@ -172,7 +190,7 @@ const SkinVisionPage = () => {
               size={25}
               style={{ padding: "1px", color: "white" }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent the event from bubbling up to the parent div
+                e.stopPropagation();
                 setChatClicked(false);
               }}
             />
@@ -186,6 +204,7 @@ const SkinVisionPage = () => {
           </>
         )}
       </div>
+      <Footer />
     </motion.div>
   );
 };

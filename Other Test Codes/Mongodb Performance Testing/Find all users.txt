@@ -1,0 +1,47 @@
+import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClients
+import org.bson.Document
+import com.mongodb.client.MongoCursor
+
+// MongoDB connection URI
+def mongoUri = 'mongodb+srv://isara:isara@healthbot.p5i8q.mongodb.net/healthbot?retryWrites=true&w=majority&appName=healthbot'
+
+// Create MongoClient
+def mongoClient = MongoClients.create(mongoUri)
+
+// Access the 'healthbot' database and 'user' collection
+def database = mongoClient.getDatabase('healthbot')
+def collection = database.getCollection('user')
+
+// Find all users
+def cursor = collection.find().iterator()
+
+// Check if there are any users
+if (cursor.hasNext()) {
+    StringBuilder allUsers = new StringBuilder()
+    
+    while (cursor.hasNext()) {
+        def user = cursor.next()
+        
+        // Log each found user to JMeter's log
+        log.info("User found: " + user.toJson())
+        
+        // Append each user to the string builder
+        allUsers.append(user.toJson()).append("\n")
+    }
+    
+    // Optionally, set the response data for JMeter
+    if (prev != null) {
+        prev.setResponseData(allUsers.toString(), 'UTF-8')
+    }
+} else {
+    log.info("No users found")
+    
+    // Optionally, set the response data for JMeter
+    if (prev != null) {
+        prev.setResponseData("No users found", 'UTF-8')
+    }
+}
+
+// Close MongoClient connection
+mongoClient.close()

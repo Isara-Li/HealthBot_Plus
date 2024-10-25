@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
 import Navbar from "../components/navbar"; // Import the Navbar component
 import StatCard from "../components/statCard"; // Import the StatCard component
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import AudioRecorder from "../components/AudioRecorder";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import Swal from "sweetalert2";
+import Footer from "../components/footer";
+
+import { deleteUserSuccess } from "../redux/user/userSlice";
 
 const Doctor = ({ productLogo }) => {
   const [doctorData, setDoctorData] = useState(null);
@@ -11,6 +19,24 @@ const Doctor = ({ productLogo }) => {
   const [correctPredictions, setCorrectPredictions] = useState(0);
   const [faultPredictions, setFaultPredictions] = useState(0);
   const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [isVisible, setIsVisible] = useState(false);
+  const [chatClicked, setChatClicked] = useState(false);
+  const [showRecorder, setShowRecorder] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (chatClicked) {
+      timer = setTimeout(() => {
+        setShowRecorder(true);
+      }, 200);
+    } else {
+      setShowRecorder(false);
+    }
+
+    return () => clearTimeout(timer); // Cleanup timer if chatClicked changes before the timer completes
+  }, [chatClicked]);
 
   useEffect(() => {
     fetchDoctorData();
@@ -19,152 +45,121 @@ const Doctor = ({ productLogo }) => {
 
   const fetchDoctorData = async () => {
     const data = {
-      id: "D00001",
-      name: "Dr. CHANDANA WIJEKOON",
-      specialization: "Dermatology",
-      contact: "+94 703454768",
-      email: "chandana123@hospital.com",
-      address: "No. 123, Galle Road,Colombo 03,Sri Lanka.",
-      profilePhoto: "https://via.placeholder.com/150",
+      id: currentUser._id,
+      name: currentUser.name,
+      email: currentUser.email,
+      age: currentUser.age,
+      country: currentUser.country,
     };
     setDoctorData(data);
   };
 
   const fetchReportHistory = async () => {
-    const data = [
-      {
-        id: 1,
-        patientName: "Binura Fernando",
-        date: "2024-08-20",
-        investigation: "Cancer",
-        status: "Pending",
-        modelPrediction: "Correct", // Can be "Correct" or "Fault"
-      },
-      {
-        id: 2,
-        patientName: "Binura Fernando",
-        date: "2024-07-15",
-        investigation: "Atopic Dermatitis",
-        status: "Reviewed",
-        modelPrediction: "Fault",
-      },
-      {
-        id: 3,
-        patientName: "Kusal Mendis",
-        date: "2023-06-10",
-        investigation: "Benign Keratosis",
-        status: "Reviewed",
-        modelPrediction: "Correct",
-      },
-      {
-        id: 4,
-        patientName: "Dimuth Karunarathne",
-        date: "2024-05-05",
-        investigation: "Dermatofibroma",
-        status: "Pending",
-        modelPrediction: "Fault",
-      },
-    ];
-    setReports(data);
-    updatePredictionCounts(data);
+    try {
+      const response = await fetch("https://essential-carin-isara-373532ad.koyeb.app/getreports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentUser._id }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const data = JSON.parse(result.reports);
+        setReports(data);
+        console.log("Report history:", data);
+      } else {
+        console.error("Failed to fetch reports");
+      }
+    } catch (error) {
+      console.error("Error fetching report history:", error);
+    }
   };
 
-  const updatePredictionCounts = (reports) => {
-    const correct = reports.filter(
-      (report) => report.modelPrediction === "Correct"
-    ).length;
-    const fault = reports.filter(
-      (report) => report.modelPrediction === "Fault"
-    ).length;
-    setCorrectPredictions(correct);
-    setFaultPredictions(fault);
+  // Function to update report status to 'Reviewed'
+  const updateReportStatus = async (reportId) => {
+    try {
+      const response = await fetch(`https://essential-carin-isara-373532ad.koyeb.app/updatereportstatus`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reportId, status: "Reviewed", review_date: new Date().toLocaleDateString() }),
+      });
+
+      if (response.ok) {
+        // Update the local state to reflect the change
+        setReports((prevReports) =>
+          prevReports.map((report) =>
+            report._id.$oid === reportId
+              ? { ...report, status: "Reviewed" }
+              : report
+          )
+        );
+        window.location.reload();
+      } else {
+        console.error("Failed to update report status");
+      }
+    } catch (error) {
+      console.error("Error updating report status:", error);
+    }
   };
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
+  const handlelogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to Sign Out!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sign Out",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteUserSuccess()); // Dispatch logout action
+        navigate("/");
+      }
+    });
   };
 
   const handleSaveChanges = () => {
     setIsEditing(false);
   };
 
-  const handleReportClick = (reportId) => {
-    navigate(`/doctor-review/${reportId}`);
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
   };
-
-  const handleTogglePrediction = (reportId) => {
-    setReports((prevReports) =>
-      prevReports.map((report) =>
-        report.id === reportId
-          ? {
-            ...report,
-            modelPrediction:
-              report.modelPrediction === "Correct" ? "Fault" : "Correct",
-          }
-          : report
-      )
-    );
-    updatePredictionCounts(
-      reports.map((report) =>
-        report.id === reportId
-          ? {
-            ...report,
-            modelPrediction:
-              report.modelPrediction === "Correct" ? "Fault" : "Correct",
-          }
-          : report
-      )
-    );
-  };
-
-  const handleMarkAsReviewed = (reportId) => {
-    setReports(
-      reports.map((report) =>
-        report.id === reportId ? { ...report, status: "Reviewed" } : report
-      )
-    );
-  };
-
-  const handleMarkAsPending = (reportId) => {
-    setReports(
-      reports.map((report) =>
-        report.id === reportId ? { ...report, status: "Pending" } : report
-      )
-    );
-  };
-
-  const totalReports = reports.length;
-  const reviewedReports = reports.filter(
-    (report) => report.status === "Reviewed"
-  ).length;
-  const pendingReports = reports.filter(
-    (report) => report.status === "Pending"
-  ).length;
 
   if (!doctorData)
     return <div className="text-center text-gray-500">Loading...</div>;
 
   return (
     <div className="App">
-      <Navbar /> {/* Include Navbar component */}
+      <Navbar />
       <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen">
         <div className="flex justify-center space-x-6 mb-8">
-          <StatCard title="Total Reports" value={totalReports} />
-          <StatCard title="Reviewed Reports" value={reviewedReports} />
-          <StatCard title="Pending Reports" value={pendingReports} />
+          <StatCard title="Total Reports" value={reports.length} />
           <StatCard
-            title="Correct Model Predictions"
-            value={correctPredictions}
+            title="Reviewed Reports"
+            value={
+              reports.filter((report) => report.status === "Reviewed").length
+            }
           />
-          <StatCard title="Fault Model Predictions" value={faultPredictions} />
+          <StatCard
+            title="Pending Reports"
+            value={
+              reports.filter((report) => report.status === "Pending").length
+            }
+          />
         </div>
 
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
           <div className="text-center">
             <img
-              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRripLcqGUKIBfgbtmux6U1UY9UkgezqzJzFw&s'
+              src={currentUser.profile}
               alt="Profile"
-              className="w-24 h-24 rounded-full border-2 border-gray-300 mx-auto"
+              className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
             />
             <div className="mt-4">
               <h1 className="text-2xl font-semibold text-gray-800">
@@ -173,94 +168,22 @@ const Doctor = ({ productLogo }) => {
               <p className="text-lg text-gray-600">
                 Doctor ID: {doctorData.id}
               </p>
-              <p className="text-lg text-gray-600">
-                Specialization: {doctorData.specialization}
-              </p>
-              <p className="text-lg text-gray-600">
-                Contact: {doctorData.contact}
-              </p>
               <p className="text-lg text-gray-600">Email: {doctorData.email}</p>
+              <p className="text-lg text-gray-600">Age: {doctorData.age}</p>
               <p className="text-lg text-gray-600">
-                Address: {doctorData.address}
+                Country: {doctorData.country}
               </p>
               <button
-                className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
-                onClick={handleEditToggle}
+                className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-60"
+                onClick={handlelogout}
               >
-                Edit Personal Data
+                Sign out
               </button>
             </div>
           </div>
-
-          {isEditing && (
-            <div className="mt-8">
-              <input
-                type="text"
-                className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={doctorData.name}
-                onChange={(e) =>
-                  setDoctorData({ ...doctorData, name: e.target.value })
-                }
-                placeholder="Name"
-              />
-              <input
-                type="text"
-                className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={doctorData.specialization}
-                onChange={(e) =>
-                  setDoctorData({
-                    ...doctorData,
-                    specialization: e.target.value,
-                  })
-                }
-                placeholder="Specialization"
-              />
-              <input
-                type="text"
-                className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={doctorData.contact}
-                onChange={(e) =>
-                  setDoctorData({ ...doctorData, contact: e.target.value })
-                }
-                placeholder="Contact"
-              />
-              <input
-                type="email"
-                className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={doctorData.email}
-                onChange={(e) =>
-                  setDoctorData({ ...doctorData, email: e.target.value })
-                }
-                placeholder="Email"
-              />
-              <input
-                type="text"
-                className="doctor-input mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={doctorData.address}
-                onChange={(e) =>
-                  setDoctorData({ ...doctorData, address: e.target.value })
-                }
-                placeholder="Address"
-              />
-              <div className="flex space-x-4 mt-4">
-                <button
-                  className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-300"
-                  onClick={handleSaveChanges}
-                >
-                  Save Changes
-                </button>
-                <button
-                  className="bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 transition duration-300"
-                  onClick={handleEditToggle}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="bg-gray-200 shadow-lg rounded-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Report History
           </h2>
@@ -274,10 +197,10 @@ const Doctor = ({ productLogo }) => {
                   Patient Name
                 </th>
                 <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">
-                  Date
+                  Patient ID
                 </th>
                 <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-32">
-                  Investigation
+                  Date
                 </th>
                 <th className="doctor-table-th p-3 text-left text-sm font-semibold text-gray-600 w-24">
                   Status
@@ -289,18 +212,18 @@ const Doctor = ({ productLogo }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {reports.map((report) => (
-                <tr key={report.id} className="doctor-table-row">
+                <tr key={report._id.$oid} className="doctor-table-row">
                   <td className="doctor-table-td p-3 text-sm text-gray-700">
-                    {report.id}
+                    {report._id.$oid}
                   </td>
                   <td className="doctor-table-td p-3 text-sm text-gray-700">
-                    {report.patientName}
+                    {report.user_name}
+                  </td>
+                  <td className="doctor-table-td p-3 text-sm text-gray-700">
+                    {report.user_id}
                   </td>
                   <td className="doctor-table-td p-3 text-sm text-gray-700">
                     {report.date}
-                  </td>
-                  <td className="doctor-table-td p-3 text-sm text-gray-700">
-                    {report.investigation}
                   </td>
                   <td className="doctor-table-td p-3 text-sm text-gray-700">
                     {report.status}
@@ -308,40 +231,23 @@ const Doctor = ({ productLogo }) => {
                   <td className="doctor-table-td p-3 flex items-center space-x-2">
                     <button
                       className="doctor-view-button bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-                      onClick={() => handleReportClick(report.id)}
+                      onClick={() => navigate(`/report/${report._id.$oid}`)}
                     >
                       Review Report
                     </button>
                     {report.status === "Pending" && (
                       <button
                         className="doctor-view-button bg-green-500 text-white py-1 px-4 rounded-md hover:bg-green-600 transition duration-300"
-                        onClick={() => handleMarkAsReviewed(report.id)}
+                        onClick={() => updateReportStatus(report._id.$oid)}
                       >
                         Mark as Reviewed
                       </button>
                     )}
                     {report.status === "Reviewed" && (
-                      <button
-                        className="doctor-view-button bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 transition duration-300"
-                        onClick={() => handleMarkAsPending(report.id)}
-                      >
-                        Mark as Pending
+                      <button className="doctor-view-button bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 transition duration-300">
+                        Reviewed
                       </button>
                     )}
-                    <button
-                      className={`doctor-set-button ${report.modelPrediction === "Correct"
-                        ? "bg-purple-500"
-                        : "bg-red-500"
-                        } text-white py-1 px-4 rounded-md hover:${report.modelPrediction === "Correct"
-                          ? "bg-purple-600"
-                          : "bg-red-600"
-                        } transition duration-300`}
-                      onClick={() => handleTogglePrediction(report.id)}
-                    >
-                      {report.modelPrediction === "Correct"
-                        ? "Correct Model Prediction"
-                        : "Fault Model Prediction"}
-                    </button>
                   </td>
                 </tr>
               ))}
@@ -349,10 +255,32 @@ const Doctor = ({ productLogo }) => {
           </table>
         </div>
       </div>
-      <button className="fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl p-2 flex items-center hover:bg-blue-700">
-        <FaRocketchat size={14} style={{ color: "white" }} />
-        <div className="w-2"></div> Want to chat?
-      </button>
+      <div
+        onClick={() => setChatClicked(true)}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
+      >
+        {chatClicked ? (
+          <div className="flex flex-col items-start justify-center">
+            <IoCloseCircleOutline
+              size={25}
+              style={{ padding: "1px", color: "white" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setChatClicked(false);
+              }}
+            />
+            {showRecorder && <AudioRecorder />}
+          </div>
+        ) : (
+          <>
+            <FaRocketchat size={20} style={{ color: "white" }} />
+            <div className="w-2"></div>
+            <p>want to chat?</p>
+          </>
+        )}
+      </div>
+      <Footer />
     </div>
   );
 };
