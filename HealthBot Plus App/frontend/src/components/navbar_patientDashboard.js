@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarButtonPlain from "./nav_button_plain";
 import { useSelector } from "react-redux";
-import { FaBars, FaUserMd, FaComments, FaEnvelope, FaUserCircle, FaInfoCircle } from "react-icons/fa";
+import { FaBars, FaUserMd, FaComments, FaEnvelope, FaUserCircle, FaInfoCircle } from "react-icons/fa"; 
 
-function NavbarGettingStarted() {
+function NavbarPatientDashboard({ activePage }) {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile dropdown menu
+
+  // State to control the dropdown menu visibility
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
@@ -25,14 +27,15 @@ function NavbarGettingStarted() {
     navigate("/");
   };
 
+  // Function to check if a page is active
   const isActive = (page) =>
-    page === "getting_started"
+    activePage === page
       ? "border-b-4 border-blue-600 text-blue-600 px-4 py-2"
-      : "text-gray-600 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:text-blue-600 active:text-blue-600";
+      : "text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:text-blue-600 active:text-blue-600";
 
-  // Toggle dropdown visibility for mobile menu
+  // Toggle dropdown visibility
   const toggleDropdown = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setDropdownOpen(!dropdownOpen);
   };
 
   return (
@@ -44,7 +47,7 @@ function NavbarGettingStarted() {
             src={"../images/HealthBot+.PNG"}
             alt="Logo"
             className="h-10 cursor-pointer"
-            onClick={handleLogoClick}
+            onClick={handleLogoClick} // Redirect to the home page
           />
         </div>
 
@@ -53,7 +56,7 @@ function NavbarGettingStarted() {
           <div className={isActive("getting_started")}>
             <NavbarButtonPlain label="Getting Started" link="/getting_started" />
           </div>
-          <div className={isActive("doctor_overview")}>
+          <div className={isActive("Doctor Overview")}>
             <NavbarButtonPlain label="Doctor Overview" link="/doctor_overview" />
           </div>
           <div className={isActive("patient_stories")}>
@@ -72,11 +75,11 @@ function NavbarGettingStarted() {
               onClick={handleProfile}
             >
               <img
-                className="rounded-full h-7 w-7 object-cover mr-2"
+                className="rounded-full h-8 w-8 object-cover mr-3"
                 src={currentUser.profile}
                 alt="Profile Pic"
               />
-              <span>{currentUser.name}</span>
+              <span className="text-sm">{currentUser.name}</span>
             </div>
           ) : (
             <button
@@ -88,61 +91,75 @@ function NavbarGettingStarted() {
           )}
         </div>
 
-        {/* Mobile Menu Button (Hamburger Icon) */}
+        {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button
             className="text-gray-500 focus:outline-none"
-            onClick={toggleDropdown}
+            onClick={toggleDropdown} // Toggle dropdown menu visibility
           >
-            <FaBars className="h-8 w-8" />
+            <FaBars className="h-6 w-6" />
           </button>
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden flex flex-col bg-white shadow-lg mt-2 rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out space-y-4 absolute right-0 w-60">
+      {/* Dropdown Menu for Mobile */}
+      {dropdownOpen && (
+        <div className="md:hidden flex flex-col bg-white shadow-lg mt-2 rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out">
+          {/* Getting Started Menu Item */}
           <div
-            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("getting_started")}`}
+            className={`flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive(
+              "getting_started"
+            )}`}
           >
-            <FaInfoCircle className="h-5 w-5 mr-3" />
+            <FaInfoCircle className="mr-3 text-xl" /> {/* Icon for Getting Started */}
             <NavbarButtonPlain label="Getting Started" link="/getting_started" />
           </div>
 
+          {/* Doctor Overview Menu Item */}
           <div
-            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("doctor_overview")}`}
+            className={`flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive(
+              "Doctor Overview"
+            )}`}
           >
-            <FaUserMd className="h-5 w-5 mr-3" />
+            <FaUserMd className="mr-3 text-xl" /> {/* Icon for Doctor Overview */}
             <NavbarButtonPlain label="Doctor Overview" link="/doctor_overview" />
           </div>
 
+          {/* Patient Stories Menu Item */}
           <div
-            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("patient_stories")}`}
+            className={`flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive(
+              "patient_stories"
+            )}`}
           >
-            <FaComments className="h-5 w-5 mr-3" />
+            <FaComments className="mr-3 text-xl" /> {/* Icon for Patient Stories */}
             <NavbarButtonPlain label="Patient Stories" link="/patient_stories" />
           </div>
 
+          {/* Contact Us Menu Item */}
           <div
-            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("contact")}`}
+            className={`flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive(
+              "contact"
+            )}`}
           >
-            <FaEnvelope className="h-5 w-5 mr-3" />
+            <FaEnvelope className="mr-3 text-xl" /> {/* Icon for Contact Us */}
             <NavbarButtonPlain label="Contact Us" link="/contact" />
           </div>
 
-          {/* Profile Section with Icon and Image */}
+          {/* Profile Section */}
           {currentUser && (
             <div
-              className="flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg"
+              className="flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg"
               onClick={handleProfile}
             >
-              <FaUserCircle className="h-5 w-5 mr-5" />
-              <img
-                className="rounded-full h-8 w-8 object-cover mr-3"
-                src={currentUser.profile}
-                alt="Profile Pic"
-              />
-              <span className="text-sm">{currentUser.name}</span>
+              <FaUserCircle className="mr-6 text-xl" /> {/* Profile Icon */}
+              <div className="flex items-center">
+                <img
+                  className="rounded-full h-8 w-8 object-cover mr-3"
+                  src={currentUser.profile}
+                  alt="Profile Pic"
+                />
+                <span className="text-sm">{currentUser.name}</span> {/* Profile Name */}
+              </div>
             </div>
           )}
         </div>
@@ -151,4 +168,4 @@ function NavbarGettingStarted() {
   );
 }
 
-export default NavbarGettingStarted;
+export default NavbarPatientDashboard;

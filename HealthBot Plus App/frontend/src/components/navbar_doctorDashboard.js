@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarButtonPlain from "./nav_button_plain";
 import { useSelector } from "react-redux";
-import { FaBars, FaUserMd, FaComments, FaEnvelope, FaUserCircle, FaInfoCircle } from "react-icons/fa"; 
+import { FaBars, FaUserMd, FaComments, FaEnvelope, FaUserCircle, FaInfoCircle } from "react-icons/fa";
 
 function NavbarDoctorDashboard({ activePage }) {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ function NavbarDoctorDashboard({ activePage }) {
   };
 
   const handleLogoClick = () => {
-    navigate("/");
+    navigate("/"); 
   };
 
   // Function to check if a page is active
@@ -104,7 +104,7 @@ function NavbarDoctorDashboard({ activePage }) {
 
       {/* Dropdown Menu for Mobile */}
       {dropdownOpen && (
-        <div className="md:hidden flex flex-col bg-white shadow-lg mt-2 rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out">
+        <div className="md:hidden flex flex-col bg-white shadow-lg mt-2 rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out absolute right-0 w-60">
           {/* Getting Started Menu Item */}
           <div
             className={`flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive(
