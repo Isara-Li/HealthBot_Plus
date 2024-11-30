@@ -150,15 +150,15 @@ const Login = () => {
         <Navbar />
       </div>
       <motion.div
-        className="flex items-center justify-end h-screen w-screen bg-cover pr-60"
+        className="flex items-center justify-center sm:justify-end h-screen w-screen bg-cover px-4 sm:pr-20 lg:pr-60"
         initial={{ opacity: 0, x: 0 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 0 }}
         transition={{ duration: 0.5 }}
         style={{ backgroundImage: "url('/images/login_background.jpg')" }}
       >
-        <div className="bg-white p-6 rounded-xl shadow-lg max-w-xs w-1/2">
-          <h2 className="text-xl font-bold mb-6 text-center text-gray-800">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-80 max-w-sm sm:max-w-md lg:max-w-lg">
+          <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center text-gray-800">
             Log In
           </h2>
           <form onSubmit={showPasswordReset ? handlePasswordReset : handleSubmit}>
@@ -175,7 +175,7 @@ const Login = () => {
             </div>
 
             {!showPasswordReset && (
-              <div className="mb-6">
+              <div className="mb-4">
                 <label className="block text-gray-700 text-sm">Password</label>
                 <input
                   type="password"
@@ -269,6 +269,7 @@ const Login = () => {
         </div>
       </motion.div>
     </div>
+
   );
 };
 
