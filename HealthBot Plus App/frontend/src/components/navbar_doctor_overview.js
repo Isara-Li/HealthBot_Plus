@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarButtonPlain from "./nav_button_plain"; 
+import NavbarButtonPlain from "./nav_button_plain";
 import { useSelector } from "react-redux";
+import { FaBars, FaUserMd, FaComments, FaEnvelope, FaUserCircle, FaInfoCircle } from "react-icons/fa";
 
 function Navbar({ activePage }) {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State for mobile dropdown menu
+
   const handleLoginSignupClick = () => {
     navigate("/login_signup");
   };
@@ -24,6 +27,11 @@ function Navbar({ activePage }) {
     activePage === page
       ? "border-b-4 border-blue-600 text-blue-600 px-4 py-2"
       : "text-gray-600 px-4 py-2 rounded-lg hover:text-blue-600 transition-colors focus:text-blue-600 active:text-blue-600";
+
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
   return (
     <div className="bg-white border-b border-slate-200 h-18 font-sans z-[999] shadow-md">
@@ -80,13 +88,65 @@ function Navbar({ activePage }) {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
-          <button className="text-gray-500 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
+          <button
+            className="text-gray-500 focus:outline-none"
+            onClick={toggleDropdown} // Toggle dropdown menu visibility
+          >
+            <FaBars className="h-8 w-8" />
           </button>
         </div>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {dropdownOpen && (
+        <div className="md:hidden flex flex-col bg-white shadow-lg mt-2 rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out absolute right-0 w-60">
+          {/* Dropdown Menu Items */}
+          <div
+            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("getting_started")}`}
+          >
+            <FaInfoCircle className="h-5 w-5 mr-3" />
+            <NavbarButtonPlain label="Getting Started" link="/getting_started" />
+          </div>
+
+          <div
+            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("doctor_overview")}`}
+          >
+            <FaUserMd className="h-5 w-5 mr-3" />
+            <NavbarButtonPlain label="Doctor Overview" link="/doctor_overview" />
+          </div>
+
+          <div
+            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("patient_stories")}`}
+          >
+            <FaComments className="h-5 w-5 mr-3" />
+            <NavbarButtonPlain label="Patient Stories" link="/patient_stories" />
+          </div>
+
+          <div
+            className={`flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg ${isActive("contact")}`}
+          >
+            <FaEnvelope className="h-5 w-5 mr-3" />
+            <NavbarButtonPlain label="Contact Us" link="/contact" />
+          </div>
+
+          {/* Profile Section */}
+          {currentUser && (
+            <div
+              className="flex items-center p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg"
+              onClick={handleProfile}
+            >
+              <FaUserCircle className="h-5 w-5 mr-5" />
+              {/* User's Profile Image */}
+              <img
+                className="rounded-full h-8 w-8 object-cover mr-3"
+                src={currentUser.profile}
+                alt="Profile Pic"
+              />
+              <span className="text-sm">{currentUser.name}</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
