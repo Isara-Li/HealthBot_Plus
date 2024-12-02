@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaRocketchat } from "react-icons/fa"; 
-import Navbar from "../components/navbar_patientDashboard"; 
-import StatCard from "../components/statCard"; 
 import { useSelector, useDispatch } from "react-redux";
-import {
-  signInSuccess,
-  deleteUserSuccess,
-} from "../redux/user/userSlice";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
-import { app } from "../firebase";
-import AudioRecorder from "../components/AudioRecorder";
-import { IoCloseCircleOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
+import Navbar from "../components/navbar_patientDashboard";
+import StatCard from "../components/statCard";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { app } from "../firebase";
 import Footer from "../components/footer";
+import { signInSuccess, deleteUserSuccess } from "../redux/user/userSlice";
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
@@ -26,12 +15,10 @@ const Patient = () => {
   const [reports, setReports] = useState([]);
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [chatClicked, setChatClicked] = useState(false);
-  const [showRecorder, setShowRecorder] = useState(false); 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user); 
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     fetchPatientData();
@@ -62,7 +49,6 @@ const Patient = () => {
         const result = await response.json();
         const data = JSON.parse(result.reports);
         setReports(data);
-        console.log("Report history:", data);
       } else {
         console.error("Failed to fetch reports");
       }
@@ -84,7 +70,7 @@ const Patient = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sign Out",
-    }).then(async (result) => {
+    }).then((result) => {
       if (result.isConfirmed) {
         dispatch(deleteUserSuccess());
         navigate("/");
@@ -100,7 +86,6 @@ const Patient = () => {
       const fileName = new Date().getTime() + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
-      setIsUploading(false);
 
       await new Promise((resolve, reject) => {
         setIsUploading(true);
@@ -113,11 +98,10 @@ const Patient = () => {
           (error) => {
             console.error("Upload error: ", error);
             reject(error);
-            setIsUploading(false);
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-              downloadURL = url; 
+              downloadURL = url;
               setIsUploading(false);
               resolve();
             });
@@ -163,68 +147,58 @@ const Patient = () => {
   return (
     <div className="App">
       <Navbar />
-      <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen">
-        <div className="flex flex-wrap justify-center space-x-4 mb-8">
-          <div className="flex-initial flex-shrink-0 w-full sm:w-1/3 md:w-1/4 p-2">
+      <div className="max-w-7xl mx-auto  p-6 bg-gray-100 min-h-screen">
+        {/* Stat Cards Section */}
+        <div className="w-full flex flex-wrap justify-center space-x-4 mb-8">
+          <div className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
             <StatCard title="Total Reports" value={totalReports} />
           </div>
-          <div className="flex-initial flex-shrink-0 w-full sm:w-1/3 md:w-1/4 p-2">
+          <div className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
             <StatCard title="Reviewed Reports" value={reviewedReports} />
           </div>
-          <div className="flex-initial flex-shrink-0 w-full sm:w-1/3 md:w-1/4 p-2">
+          <div className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
             <StatCard title="Pending Reports" value={pendingReports} />
           </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex flex-col md:flex-row">
-          <div className="text-center md:w-1/3">
-            {isUploading && <div className="text-green-500 my-1">Uploading image...</div>}
-            <img
-              src={currentUser.profile}
-              alt="Profile"
-              className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
-              onClick={() => document.getElementById("fileInput").click()}
-            />
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-            <h1 className="text-2xl font-semibold text-gray-800 mt-4">{currentUser.name}</h1>
-            <p className="text-lg text-gray-600">Patient ID: {currentUser._id}</p>
-            <p className="text-lg text-gray-600">Age: {currentUser.age}</p>
-            <p className="text-lg text-gray-600">Gender: {currentUser.sex}</p>
-            <p className="text-lg text-gray-600">Contact: {currentUser.email}</p>
-          </div>
-
-          <div className="flex-1 mt-4 md:mt-0 md:ml-4 flex flex-col items-center">
-            {isEditing && (
-              <div className="mt-8 w-full">
-                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.name} onChange={(e) => setPatientData({ ...patientData, name: e.target.value })} placeholder="Name" />
-                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.age} onChange={(e) => setPatientData({ ...patientData, age: e.target.value })} placeholder="Age" />
-                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.gender} onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })} placeholder="Gender" />
-                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.contact} onChange={(e) => setPatientData({ ...patientData, contact: e.target.value })} placeholder="Contact" />
-              </div>
-            )}
-            <div className="flex justify-between space-x-4 mt-4 w-full">
-              <button
-                className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-full"
-                onClick={isEditing ? handleSaveChanges : handleEditToggle}
-              >
-                {isEditing ? "Save Changes" : "Edit Profile"}
-              </button>
-              <button
-                className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-full"
-                onClick={handleLogout}
-              >
-                Log Out
-              </button>
-            </div>
+        {/* Profile Section */}
+        <div className="text-center bg-white shadow-lg rounded-lg p-6 mb-8">
+          {isUploading && <div className="text-green-500 my-1">Uploading image...</div>}
+          <img
+            src={currentUser.profile}
+            alt="Profile"
+            className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto mb-4 cursor-pointer"
+            onClick={() => document.getElementById("fileInput").click()}
+          />
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+          <h1 className="text-2xl font-semibold text-gray-800">{currentUser.name}</h1>
+          <p className="text-lg text-gray-600">Patient ID: {currentUser._id}</p>
+          <p className="text-lg text-gray-600">Age: {currentUser.age}</p>
+          <p className="text-lg text-gray-600">Gender: {currentUser.sex}</p>
+          <p className="text-lg text-gray-600">Contact: {currentUser.email}</p>
+          <div className="flex justify-center space-x-4 mt-6">
+            <button
+              className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
+              onClick={isEditing ? handleSaveChanges : handleEditToggle}
+            >
+              {isEditing ? "Save Changes" : "Edit Profile"}
+            </button>
+            <button
+              className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300"
+              onClick={handleLogout}
+            >
+              Log Out
+            </button>
           </div>
         </div>
 
+        {/* Report History Section */}
         <div className="bg-white shadow-lg rounded-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Report History</h2>
           <div className="overflow-x-auto">
@@ -232,10 +206,18 @@ const Patient = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="p-3 text-left text-sm font-semibold text-gray-600">Report ID</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Patient Name</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Patient ID</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Date</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Status</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">
+                    Patient Name
+                  </th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">
+                    Patient ID
+                  </th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">
+                    Date
+                  </th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">
+                    Status
+                  </th>
                   <th className="p-3 text-left text-sm font-semibold text-gray-600">Actions</th>
                 </tr>
               </thead>
@@ -243,13 +225,16 @@ const Patient = () => {
                 {reports.map((report) => (
                   <tr key={report._id.$oid} className={report.status === "Reviewed" ? "bg-green-100" : ""}>
                     <td className="p-3 text-sm text-gray-700">{report._id.$oid}</td>
-                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.user_name}</td>
-                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.user_id}</td>
+                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.name}</td>
+                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.patientId}</td>
                     <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.date}</td>
                     <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.status}</td>
-                    <td className="p-3 flex items-center">
-                      <button className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300" onClick={() => navigate(`/report/${report._id.$oid}`)}>
-                        Preview Report
+                    <td className="p-3 text-sm text-gray-700">
+                      <button
+                        className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600"
+                        onClick={() => navigate(`/patient/report/${report._id.$oid}`)}
+                      >
+                        View
                       </button>
                     </td>
                   </tr>
