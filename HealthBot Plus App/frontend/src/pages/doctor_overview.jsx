@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaEnvelope, FaUser, FaUniversity, FaBriefcase, FaHospitalAlt, FaIdBadge, FaStickyNote, FaClipboardCheck, FaCheck } from 'react-icons/fa'; // Import icons
 import { useSelector } from 'react-redux';
-import Navbar from "../components/navbar_doctor_overview"; // Import Navbar
+import Navbar from "../components/navbar";
 import Footer from "../components/footer"; // Import Footer
 
 function DoctorOverview() {
@@ -23,9 +23,11 @@ function DoctorOverview() {
 
   return (
     <div>
-      <Navbar activePage="doctor_overview" /> {/* Pass the activePage prop */}
+      <div className="App">
+        <Navbar />
+      </div>
       <div className="container mx-auto p-8 bg-white shadow-lg rounded-lg mt-6">
-        
+
         {/* Doctor Profile Image */}
         <div className="text-center mb-8">
           <img
@@ -123,7 +125,7 @@ function DoctorOverview() {
         </div>
       </div>
 
-      
+
       <Footer />
     </div>
   );

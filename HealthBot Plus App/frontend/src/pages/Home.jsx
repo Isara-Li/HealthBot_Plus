@@ -87,15 +87,10 @@ const SkinVisionPage = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 0 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="App">
-        <Navbar />
-      </div>
+    <div className="App">
+
+
+      <Navbar />
       {/* First Section */}
       <section
         className="relative h-screen flex flex-col-reverse py-6 lg:flex-row items-center"
@@ -205,7 +200,7 @@ const SkinVisionPage = () => {
       </div>
 
       <Footer />
-    </motion.div>
+    </div>
   );
 };
 

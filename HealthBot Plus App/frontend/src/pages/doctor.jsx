@@ -7,7 +7,7 @@ import AudioRecorder from "../components/AudioRecorder";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
 import Footer from "../components/footer";
-import Navbar from "../components/navbar_doctorDashboard";
+import Navbar from "../components/navbar";
 import { deleteUserSuccess } from "../redux/user/userSlice";
 
 const Doctor = ({ productLogo }) => {
@@ -115,7 +115,9 @@ const Doctor = ({ productLogo }) => {
 
   return (
     <div className="App">
-      <Navbar />
+      <div className="App">
+        <Navbar />
+      </div>
       <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen">
         <div className="flex flex-col md:flex-row justify-center md:space-x-6 mb-8">
           <StatCard title="Total Reports" value={reports.length} />
@@ -201,9 +203,8 @@ const Doctor = ({ productLogo }) => {
                         Review Report
                       </button>
                       <button
-                        className={`doctor-view-button ${
-                          report.status === "Pending" ? "bg-green-500" : "bg-yellow-500"
-                        } text-white py-1 px-4 rounded-md hover:bg-green-600 transition duration-300 hidden sm:block`}
+                        className={`doctor-view-button ${report.status === "Pending" ? "bg-green-500" : "bg-yellow-500"
+                          } text-white py-1 px-4 rounded-md hover:bg-green-600 transition duration-300 hidden sm:block`}
                         onClick={() =>
                           updateReportStatus(report._id.$oid, report.status === "Pending" ? "Reviewed" : "Pending")
                         }
