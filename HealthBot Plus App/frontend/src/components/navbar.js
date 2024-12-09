@@ -126,7 +126,7 @@ function Navbar() {
       {currentUser ? (
         <div
           onClick={handleProfile}
-          className="p-4 flex items-center hover:bg-gray-100 cursor-pointer"
+          className="p-4 flex items-center hover:bg-gray-100 cursor-pointer rounded-3xl"
         >
           <img
             className="rounded-full h-8 w-8 object-cover mr-4"
@@ -138,7 +138,7 @@ function Navbar() {
       ) : (
         <button
           onClick={handleLoginSignupClick}
-          className="w-full text-left p-4 hover:bg-gray-100"
+          className="w-full text-left p-4"
         >
           Login / SignUp
         </button>
