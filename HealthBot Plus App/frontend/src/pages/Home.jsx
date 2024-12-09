@@ -87,13 +87,18 @@ const SkinVisionPage = () => {
   };
 
   return (
-    <div className="App">
-
-
-      <Navbar />
+    <motion.div
+      initial={{ opacity: 0, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="App">
+        <Navbar />
+      </div>
       {/* First Section */}
       <section
-        className="relative h-screen flex flex-col-reverse py-6 lg:flex-row items-center"
+        className="relative h-screen flex flex-col-reverse lg:flex-row items-center"
         style={{ backgroundColor: "#ffffff" }}
       >
         <div className="relative container mx-4 md:mx-10 flex flex-col lg:flex-row items-center lg:justify-between h-full px-4 lg:px-8 space-y-6 lg:space-y-0 lg:space-x-1">
@@ -127,7 +132,7 @@ const SkinVisionPage = () => {
           </div>
 
           {/* Image Content */}
-          <div className="max-w-full lg:max-w-md flex justify-center md:w-1/2 lg:w-auto">
+          <div className="max-w-full lg:max-w-md flex justify-center">
             <img
               src="https://www.verywellhealth.com/thmb/qq1afE3eNsGV8bVy29-Zi_oqrAE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/VWH-JoshSeong-SkingScreening-Recirc-512cda1d7c674b969a03a36c20d7d178.jpg"
               alt="Skin Screening"
@@ -138,7 +143,7 @@ const SkinVisionPage = () => {
       </section>
 
       {/* Second Section */}
-      <section className="bg-white flex flex-col py-9 items-center p-4 md:p-8">
+      <section className="bg-white flex flex-col items-center p-4 md:p-8">
         <div className="bg-slate-100 shadow-lg rounded-lg p-4 md:p-8 flex flex-col items-center border border-gray-500 w-full lg:max-w-5xl">
           <div className="text-center text-gray-700">
             <h1 className="text-xl md:text-2xl font-bold mb-2 py-6">
@@ -176,7 +181,7 @@ const SkinVisionPage = () => {
       {/* Chat Section */}
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+        className={`fixed right-4 bottom-4 md:right-[55px] md:bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-full md:w-96 h-96" : "w-40 h-10 justify-center"
           }`}
       >
         {chatClicked ? (
@@ -201,7 +206,7 @@ const SkinVisionPage = () => {
       </div>
 
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 

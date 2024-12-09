@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaRocketchat } from "react-icons/fa"; // Import the chat icon
-import Navbar from "../components/navbar"; // Import the Navbar component
-import StatCard from "../components/statCard"; // Import the StatCard component
+import { FaRocketchat } from "react-icons/fa"; 
+import Navbar from "../components/navbar_patientDashboard"; 
+import StatCard from "../components/statCard"; 
 import { useSelector, useDispatch } from "react-redux";
-import Swal from "sweetalert2";
 import {
   signInSuccess,
   deleteUserSuccess,
@@ -16,18 +15,23 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { app } from "../firebase";
+import AudioRecorder from "../components/AudioRecorder";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import Swal from "sweetalert2";
 import Footer from "../components/footer";
 
 const Patient = () => {
   const [patientData, setPatientData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [reports, setReports] = useState([]);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [chatClicked, setChatClicked] = useState(false);
+  const [showRecorder, setShowRecorder] = useState(false); 
 
-  const { currentUser } = useSelector((state) => state.user); // get the user from the redux store
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user); 
 
   useEffect(() => {
     fetchPatientData();
@@ -35,17 +39,15 @@ const Patient = () => {
   }, [currentUser]);
 
   const fetchPatientData = async () => {
-    if (currentUser) {
-      const data = {
-        id: currentUser._id,
-        name: currentUser.name,
-        age: currentUser.age,
-        gender: currentUser.sex,
-        contact: currentUser.email,
-        profile: currentUser.profile,
-      };
-      setPatientData(data);
-    }
+    const data = {
+      id: currentUser._id,
+      name: currentUser.name,
+      age: currentUser.age,
+      gender: currentUser.sex,
+      contact: currentUser.email,
+      profile: currentUser.profile,
+    };
+    setPatientData(data);
   };
 
   const fetchReportHistory = async () => {
@@ -60,6 +62,7 @@ const Patient = () => {
         const result = await response.json();
         const data = JSON.parse(result.reports);
         setReports(data);
+        console.log("Report history:", data);
       } else {
         console.error("Failed to fetch reports");
       }
@@ -69,7 +72,7 @@ const Patient = () => {
   };
 
   const handleEditToggle = () => {
-    setIsEditing((prev) => !prev);
+    setIsEditing(!isEditing);
   };
 
   const handleLogout = () => {
@@ -81,9 +84,9 @@ const Patient = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sign Out",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        dispatch(deleteUserSuccess()); // Dispatch logout action
+        dispatch(deleteUserSuccess());
         navigate("/");
       }
     });
@@ -97,13 +100,15 @@ const Patient = () => {
       const fileName = new Date().getTime() + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
+      setIsUploading(false);
 
       await new Promise((resolve, reject) => {
         setIsUploading(true);
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            // Handle upload progress if needed
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
           },
           (error) => {
             console.error("Upload error: ", error);
@@ -112,7 +117,7 @@ const Patient = () => {
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-              downloadURL = url; // Store the download URL
+              downloadURL = url; 
               setIsUploading(false);
               resolve();
             });
@@ -138,9 +143,9 @@ const Patient = () => {
       });
 
       if (response.ok) {
+        setIsEditing(false);
         const result = await response.json();
-        dispatch(signInSuccess(result)); // Update user in Redux store
-        setIsEditing(false); // Disable editing mode after saving changes
+        dispatch(signInSuccess(result));
       } else {
         console.error("Failed to update:", response.statusText);
       }
@@ -149,7 +154,7 @@ const Patient = () => {
     }
   };
 
-  const totalReports = reports.length || 0;
+  const totalReports = reports.length;
   const reviewedReports = reports.filter((report) => report.status === "Reviewed").length;
   const pendingReports = reports.filter((report) => report.status === "Pending").length;
 
@@ -159,21 +164,25 @@ const Patient = () => {
     <div className="App">
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen">
-        {/* Stat Cards Section */}
-        <div className="flex flex-wrap justify-between mb-8">
-          <StatCard title="Total Reports" value={totalReports} />
-          <StatCard title="Reviewed Reports" value={reviewedReports} />
-          <StatCard title="Pending Reports" value={pendingReports} />
+        <div className="flex flex-wrap justify-center space-x-4 mb-8">
+          <div className="flex-initial flex-shrink-0 w-full sm:w-1/3 md:w-1/4 p-2">
+            <StatCard title="Total Reports" value={totalReports} />
+          </div>
+          <div className="flex-initial flex-shrink-0 w-full sm:w-1/3 md:w-1/4 p-2">
+            <StatCard title="Reviewed Reports" value={reviewedReports} />
+          </div>
+          <div className="flex-initial flex-shrink-0 w-full sm:w-1/3 md:w-1/4 p-2">
+            <StatCard title="Pending Reports" value={pendingReports} />
+          </div>
         </div>
 
-        {/* Profile Section */}
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-          {isUploading && <div className="text-green-500 my-1">Uploading image...</div>}
-          <div className="text-center">
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-8 flex flex-col md:flex-row">
+          <div className="text-center md:w-1/3">
+            {isUploading && <div className="text-green-500 my-1">Uploading image...</div>}
             <img
               src={currentUser.profile}
               alt="Profile"
-              className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto mb-4 cursor-pointer"
+              className="w-40 h-40 rounded-full border-2 border-gray-300 mx-auto cursor-pointer"
               onClick={() => document.getElementById("fileInput").click()}
             />
             <input
@@ -183,112 +192,71 @@ const Patient = () => {
               style={{ display: "none" }}
               onChange={(e) => setFile(e.target.files[0])}
             />
-            <h1 className="text-2xl font-semibold text-gray-800">{currentUser.name}</h1>
+            <h1 className="text-2xl font-semibold text-gray-800 mt-4">{currentUser.name}</h1>
             <p className="text-lg text-gray-600">Patient ID: {currentUser._id}</p>
-            <p className="text-lg text-gray-600">Age: {patientData.age}</p>
-            <p className="text-lg text-gray-600">Gender: {patientData.gender}</p>
-            <p className="text-lg text-gray-600">Contact: {patientData.contact}</p>
+            <p className="text-lg text-gray-600">Age: {currentUser.age}</p>
+            <p className="text-lg text-gray-600">Gender: {currentUser.sex}</p>
+            <p className="text-lg text-gray-600">Contact: {currentUser.email}</p>
           </div>
 
-          {/* Edit profile inputs and buttons */}
-          {isEditing && (
-            <div className="mt-6">
-              <input
-                type="text"
-                className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={patientData.name}
-                onChange={(e) =>
-                  setPatientData({ ...patientData, name: e.target.value })
-                }
-                placeholder="Name"
-              />
-              <input
-                type="text"
-                className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={patientData.age}
-                onChange={(e) =>
-                  setPatientData({ ...patientData, age: e.target.value })
-                }
-                placeholder="Age"
-              />
-              <input
-                type="text"
-                className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={patientData.gender}
-                onChange={(e) =>
-                  setPatientData({ ...patientData, gender: e.target.value })
-                }
-                placeholder="Gender"
-              />
-              <input
-                type="text"
-                className="mb-4 p-3 border border-gray-300 rounded-lg w-full"
-                value={patientData.contact}
-                onChange={(e) =>
-                  setPatientData({ ...patientData, contact: e.target.value })
-                }
-                placeholder="Contact"
-              />
+          <div className="flex-1 mt-4 md:mt-0 md:ml-4 flex flex-col items-center">
+            {isEditing && (
+              <div className="mt-8 w-full">
+                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.name} onChange={(e) => setPatientData({ ...patientData, name: e.target.value })} placeholder="Name" />
+                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.age} onChange={(e) => setPatientData({ ...patientData, age: e.target.value })} placeholder="Age" />
+                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.gender} onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })} placeholder="Gender" />
+                <input type="text" className="mb-4 p-3 border border-gray-300 rounded-lg w-full" value={patientData.contact} onChange={(e) => setPatientData({ ...patientData, contact: e.target.value })} placeholder="Contact" />
+              </div>
+            )}
+            <div className="flex justify-between space-x-4 mt-4 w-full">
               <button
-                className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-300"
-                onClick={handleSaveChanges}
+                className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300 w-full"
+                onClick={isEditing ? handleSaveChanges : handleEditToggle}
               >
-                Save Changes
+                {isEditing ? "Save Changes" : "Edit Profile"}
+              </button>
+              <button
+                className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300 w-full"
+                onClick={handleLogout}
+              >
+                Log Out
               </button>
             </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex justify-center space-x-4 mt-4">
-            <button
-              className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
-              onClick={handleEditToggle}
-            >
-              {isEditing ? "Cancel Edit" : "Edit Profile"}
-            </button>
-            <button
-              className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300"
-              onClick={handleLogout}
-            >
-              Log Out
-            </button>
           </div>
         </div>
 
-        {/* Report History Section */}
         <div className="bg-white shadow-lg rounded-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Report History</h2>
-          <table className="min-w-full bg-white border rounded-lg overflow-hidden">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">Report ID</th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Patient Name</th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Patient ID</th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Date</th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Status</th>
-                <th className="p-3 text-left text-sm font-semibold text-gray-600">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {reports.map((report) => (
-                <tr key={report._id.$oid} className={report.status === "Reviewed" ? "bg-green-100" : ""}>
-                  <td className="p-3 text-sm text-gray-700">{report._id.$oid}</td>
-                  <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.name}</td>
-                  <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.patientId}</td>
-                  <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.date}</td>
-                  <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.status}</td>
-                  <td className="p-3 text-sm text-gray-700">
-                    <button
-                      className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600"
-                      onClick={() => navigate(`/report/${report._id.$oid}`)}
-                    >
-                      View
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border rounded-lg overflow-hidden">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Report ID</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Patient Name</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Patient ID</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Date</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600 hidden sm:table-cell">Status</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {reports.map((report) => (
+                  <tr key={report._id.$oid} className={report.status === "Reviewed" ? "bg-green-100" : ""}>
+                    <td className="p-3 text-sm text-gray-700">{report._id.$oid}</td>
+                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.user_name}</td>
+                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.user_id}</td>
+                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.date}</td>
+                    <td className="p-3 text-sm text-gray-700 hidden sm:table-cell">{report.status}</td>
+                    <td className="p-3 flex items-center">
+                      <button className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 transition duration-300" onClick={() => navigate(`/report/${report._id.$oid}`)}>
+                        Preview Report
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <Footer />

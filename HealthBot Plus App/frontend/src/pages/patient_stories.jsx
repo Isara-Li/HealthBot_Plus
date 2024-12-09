@@ -1,6 +1,6 @@
 import React from 'react';
-import { FaQuoteLeft, FaRegCommentDots } from 'react-icons/fa';
-import Navbar from "../components/navbar";
+import { FaQuoteLeft, FaRegCommentDots } from 'react-icons/fa'; 
+import NavbarPatientStories from '../components/navbar_patient_stories'; 
 import Footer from "../components/footer";
 
 
@@ -64,9 +64,7 @@ const patients = [
 function PatientStories() {
   return (
     <div>
-      <div className="App">
-        <Navbar />
-      </div>
+      <NavbarPatientStories activePage="patient_stories" /> {/* Include the Navbar */}
       <div className="container mx-auto p-8">
         <h1 className="text-4xl font-bold text-center mb-10 text-blue-600 flex justify-center items-center">
           <FaRegCommentDots className="text-blue-600 mr-3" /> {/* Icon next to the heading */}
@@ -100,7 +98,7 @@ function PatientStories() {
           ))}
         </div>
       </div>
-      <Footer />
+      <Footer /> 
     </div>
   );
 }
