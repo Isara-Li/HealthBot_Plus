@@ -176,7 +176,8 @@ const SkinVisionPage = () => {
       {/* Chat Section */}
       <div
         onClick={() => setChatClicked(true)}
-        className={`fixed right-4 bottom-4 md:right-[55px] md:bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-full md:w-96 h-96" : "w-40 h-10 justify-center"}`}
+        className={`fixed right-[55px] bottom-[45px] bg-blue-500 text-white text-sm font-semibold rounded-tl-xl rounded-tr-xl rounded-bl-xl p-2 flex items-center hover:bg-blue-700 transition-all duration-1000 ease-in-out ${chatClicked ? "w-96 h-100" : "w-40 h-10 justify-center bg-blue-700"
+          }`}
       >
         {chatClicked ? (
           <div className="flex flex-col items-start justify-center">
