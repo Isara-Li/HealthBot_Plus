@@ -1,12 +1,14 @@
 import React from "react";
 import { FaUserPlus, FaSignInAlt, FaGoogle, FaRobot, FaCheckCircle } from "react-icons/fa";
-import NavbarGettingStarted from "../components/navbar_gettingStarted";
+import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 
 export default function GettingStarted() {
   return (
     <div>
-      <NavbarGettingStarted /> 
+      <div className="App">
+        <Navbar />
+      </div>
 
       {/* Video Section*/}
       <section className="bg-gray-100 py-10">
@@ -42,13 +44,13 @@ export default function GettingStarted() {
       {/* Vertical Timeline Steps */}
       <section className="py-10">
         <div className="container mx-auto flex flex-col space-y-10 pl-4"> {/* Adjusted padding to leave space for numbers */}
-          
+
           {/* Step 1 */}
           <div className="relative flex items-center">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
               1
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center"> 
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
               <div className="flex-shrink-0 mr-6">
                 <img
                   src="../images/LoginSignUp.png"
@@ -235,7 +237,7 @@ export default function GettingStarted() {
           </p>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );

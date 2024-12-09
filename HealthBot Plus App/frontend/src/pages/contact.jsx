@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import Faq from "../components/faq_card";
 import Footer from "../components/footer";
-import NavbarContactUs from "../components/navbar_contactUs"; // Use the custom Navbar for Contact Us page
+import Navbar from "../components/navbar";
 import { FaRegEnvelopeOpen, FaQuestionCircle, FaArrowDown, FaArrowUp } from "react-icons/fa"; // Import arrow icons
 
 export default function Contact() {
@@ -109,7 +109,9 @@ export default function Contact() {
 
   return (
     <div>
-      <NavbarContactUs /> {/* Use NavbarContactUs component */}
+      <div className="App">
+        <Navbar />
+      </div>
       <div className="flex justify-center items-center mb-8 mt-10">
         <img
           src={"/images/HealthBot+.PNG"}
