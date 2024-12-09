@@ -10,12 +10,12 @@ export default function GettingStarted() {
 
       {/* Video Section*/}
       <section className="bg-gray-100 py-10">
-        <div className="container mx-auto text-center">
+        <div className="container mx-auto text-center px-4">
           <h2 className="text-4xl font-bold text-blue-600 mb-6">Watch a Demo of HealthBot+</h2>
           <div className="mt-8 flex justify-center">
-            <div className="shadow-lg rounded-lg overflow-hidden">
+            <div className="shadow-lg rounded-lg overflow-hidden w-full max-w-3xl">
               <iframe
-                width="560"
+                width="100%"
                 height="315"
                 src="https://www.youtube.com/embed/GAosly8RCoQ?si=gACGEXRu5DayvXXJ"
                 title="YouTube video player"
@@ -31,7 +31,7 @@ export default function GettingStarted() {
 
       {/* Introduction Section */}
       <section className="bg-gray-100 py-10">
-        <div className="container mx-auto text-center">
+        <div className="container mx-auto text-center px-4">
           <h1 className="text-4xl font-bold text-blue-600 mb-6">Getting Started with HealthBot+</h1>
           <p className="text-lg text-gray-600 mb-4">
             Follow these steps to begin your journey with HealthBot+. We’ll guide you through creating an account, logging in, and accessing your personalized skin health services.
@@ -41,19 +41,19 @@ export default function GettingStarted() {
 
       {/* Vertical Timeline Steps */}
       <section className="py-10">
-        <div className="container mx-auto flex flex-col space-y-10 pl-4"> {/* Adjusted padding to leave space for numbers */}
+        <div className="container mx-auto flex flex-col space-y-10 pl-16 px-4">
           
           {/* Step 1 */}
-          <div className="relative flex items-center">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               1
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center"> 
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center"> 
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/LoginSignUp.png"
                   alt="Login/SignUp"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -65,16 +65,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 2 */}
-          <div className="relative flex items-center bg-gray-50">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center bg-gray-50">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               2
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Signing Up.png"
                   alt="SignUp Button"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -86,16 +86,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 2.1 */}
-          <div className="relative flex items-center">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               2.1
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Fill Your Details.png"
                   alt="Fill User Details"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -109,16 +109,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 2.2 */}
-          <div className="relative flex items-center bg-gray-50">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center bg-gray-50">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               2.2
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Create Your Account.png"
                   alt="Account Creation"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -132,16 +132,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 3 */}
-          <div className="relative flex items-center">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               3
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Click Log In.png"
                   alt="Click Sign In"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -155,16 +155,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 3.1 */}
-          <div className="relative flex items-center bg-gray-50">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center bg-gray-50">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               3.1
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Email & Password.png"
                   alt="Email and Password"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -178,16 +178,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 3.2 */}
-          <div className="relative flex items-center">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               3.2
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Google Authentication.png"
                   alt="Google Authentication"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -201,16 +201,16 @@ export default function GettingStarted() {
           </div>
 
           {/* Step 4 */}
-          <div className="relative flex items-center">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute -left-12">
+          <div className="relative flex flex-col md:flex-row items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold absolute left-0 md:-left-12 -top-4 md:top-0">
               4
             </div>
-            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex items-center">
-              <div className="flex-shrink-0 mr-6">
+            <div className="flex-1 bg-white border-l-4 border-blue-600 rounded-lg p-6 shadow-lg flex flex-col md:flex-row items-center">
+              <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                 <img
                   src="../images/Try HealthBot.png"
                   alt="Try Skin HealthBot"
-                  className="w-80 h-auto mb-4 hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
+                  className="w-full md:w-80 h-auto hover:scale-125 transition-transform duration-300 ease-in-out object-cover"
                 />
               </div>
               <div>
@@ -228,7 +228,7 @@ export default function GettingStarted() {
 
       {/* Conclusion */}
       <section className="bg-gray-100 py-10">
-        <div className="container mx-auto text-center">
+        <div className="container mx-auto text-center px-4">
           <h2 className="text-2xl font-semibold text-blue-600 mb-6">You're All Set!</h2>
           <p className="text-lg text-gray-600">
             You’ve successfully created your account or logged in. Now, you can explore the powerful features of HealthBot+ to monitor and take care of your skin health.
