@@ -23,7 +23,7 @@ const AudioRecorder = () => {
         formData.append('audio_file', recordedBlob.blob, 'audio.wav');
 
         try {
-            const res = await axios.post('https://essential-carin-isara-373532ad.koyeb.app/chatbot', formData, {
+            const res = await axios.post('http://localhost:5000/chatbot', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
